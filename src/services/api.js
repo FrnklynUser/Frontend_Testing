@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000'; // Ajustar según puerto de FastAPI
+const API_BASE_URL = 'https://backend-testing-kvxi.onrender.com'; // Ajustar según puerto de FastAPI
 
 const api = axios.create({
   baseURL: API_BASE_URL,
