@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://backend-testing-kvxi.onrender.com'; // Ajustar según puerto de FastAPI
+const API_BASE_URL = 'https://stale-llamas-move.loca.lt'; // URL Temporal de LocalTunnel
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'bypass-tunnel-reminder': 'true', // Salta la pantalla de recordatorio de LocalTunnel
   },
 });
 
@@ -38,6 +39,7 @@ export const predictService = {
     const response = await axios.post(`${API_BASE_URL}/predict?username=${username}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
+        'bypass-tunnel-reminder': 'true', // Salta la pantalla de recordatorio de LocalTunnel
       },
     });
     return response.data;
