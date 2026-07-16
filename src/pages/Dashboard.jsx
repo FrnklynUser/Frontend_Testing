@@ -159,7 +159,7 @@ const Dashboard = () => {
   };
 
   const getStats = () => {
-    const melanoma = history.filter(h => h.prediction === 'Melanoma').length;
+    const melanoma = history.filter(h => h.prediction === 'Melanoma' || h.prediction === 'Melanoma acral').length;
     return {
       total: history.length,
       melanoma,
@@ -1170,15 +1170,15 @@ const Dashboard = () => {
             <div>
               {/* Tarjeta de predicción principal */}
               <div className="result-card" style={{
-                borderColor: result.prediction === 'Melanoma' ? 'var(--danger)' : 'var(--success)',
-                backgroundColor: result.prediction === 'Melanoma' ? 'var(--danger-bg)' : 'var(--success-bg)'
+                borderColor: (result.prediction === 'Melanoma' || result.prediction === 'Melanoma acral') ? 'var(--danger)' : 'var(--success)',
+                backgroundColor: (result.prediction === 'Melanoma' || result.prediction === 'Melanoma acral') ? 'var(--danger-bg)' : 'var(--success-bg)'
               }}>
                 <div style={{
-                  color: result.prediction === 'Melanoma' ? 'var(--danger)' : 'var(--success)',
+                  color: (result.prediction === 'Melanoma' || result.prediction === 'Melanoma acral') ? 'var(--danger)' : 'var(--success)',
                   fontWeight: 700,
                   fontSize: '1.25rem'
                 }}>
-                  {result.prediction} ({(result.confidence * 100).toFixed(2)}%)
+                  {result.prediction === 'Melanoma acral' ? 'Melanoma' : result.prediction} ({(result.confidence * 100).toFixed(2)}%)
                 </div>
 
                 {/* Barra de probabilidad raw de melanoma */}
@@ -1450,10 +1450,10 @@ const Dashboard = () => {
                 <td>{item.image_name}</td>
                 <td>
                   <span style={{
-                    color: item.prediction === 'Melanoma' ? 'var(--danger)' : 'var(--success)',
+                    color: (item.prediction === 'Melanoma' || item.prediction === 'Melanoma acral') ? 'var(--danger)' : 'var(--success)',
                     fontWeight: 600
                   }}>
-                    {item.prediction === 'Melanoma' ? '🔴' : '🟢'} {item.prediction}
+                    {(item.prediction === 'Melanoma' || item.prediction === 'Melanoma acral') ? '🔴' : '🟢'} {item.prediction === 'Melanoma acral' ? 'Melanoma' : item.prediction}
                   </span>
                 </td>
                 <td>{(item.confidence * 100).toFixed(1)}%</td>
