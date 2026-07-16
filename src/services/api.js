@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://social-geese-stand.loca.lt'; // URL Temporal de LocalTunnel
+const API_BASE_URL = 'https://poor-ties-eat.loca.lt'; // URL Temporal de LocalTunnel
 
 const api = axios.create({
   baseURL: API_BASE_URL,
