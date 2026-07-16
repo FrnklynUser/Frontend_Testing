@@ -38,6 +38,7 @@ const Dashboard = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [showClinicalForm, setShowClinicalForm] = useState(false);
   const [validationErrorData, setValidationErrorData] = useState(null);
+  const [showClinicalAlert, setShowClinicalAlert] = useState(false);
   const [clinicalData, setClinicalData] = useState({
     age: '',
     gender: '',
@@ -1230,7 +1231,6 @@ const Dashboard = () => {
                       color: '#9ca3af'
                     }}>
                       <span>0% (Nevus)</span>
-                      <span style={{ color: '#ea580c' }}>35% umbral</span>
                       <span>100% (Melanoma)</span>
                     </div>
                   </div>
@@ -1241,7 +1241,7 @@ const Dashboard = () => {
               {result.clinical_alert && (
                 <div style={{
                   marginTop: '1rem',
-                  padding: '1rem 1.25rem',
+                  padding: showClinicalAlert ? '1rem 1.25rem' : '0.75rem 1rem',
                   borderRadius: '10px',
                   border: `2px solid ${result.clinical_alert.level === 'ALTO' ? '#dc2626' :
                       result.clinical_alert.level === 'MODERADO' ? '#ea580c' : '#d97706'
@@ -1249,9 +1249,12 @@ const Dashboard = () => {
                   background: `${result.clinical_alert.level === 'ALTO' ? '#fef2f2' :
                       result.clinical_alert.level === 'MODERADO' ? '#fff7ed' : '#fffbeb'
                     }`,
-                  animation: 'fadeIn 0.4s ease'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
+                  animation: 'fadeIn 0.4s ease',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setShowClinicalAlert(!showClinicalAlert)}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: showClinicalAlert ? '0.6rem' : '0' }}>
                     <AlertCircle size={20} color={
                       result.clinical_alert.level === 'ALTO' ? '#dc2626' :
                         result.clinical_alert.level === 'MODERADO' ? '#ea580c' : '#d97706'
@@ -1276,50 +1279,55 @@ const Dashboard = () => {
                     }}>
                       {result.clinical_alert.suspicious_flags}/5 criterios ABCDE
                     </span>
+                    {showClinicalAlert ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </div>
 
-                  <p style={{ fontSize: '0.82rem', color: '#374151', marginBottom: '0.75rem', lineHeight: 1.5 }}>
-                    El modelo CNN clasifica como <strong>Nevus</strong>, pero los indicadores morfológicos
-                    extraídos presentan valores de sospecha clínica.
-                  </p>
+                  {showClinicalAlert && (
+                    <>
+                      <p style={{ fontSize: '0.82rem', color: '#374151', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                        El modelo CNN clasifica como <strong>Nevus</strong>, pero los indicadores morfológicos
+                        extraídos presentan valores de sospecha clínica.
+                      </p>
 
-                  <div style={{ marginBottom: '0.75rem' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
-                      Criterios activados:
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                      {result.clinical_alert.triggered_criteria.map((c, i) => (
-                        <span key={i} style={{
-                          fontSize: '0.75rem',
-                          padding: '0.25rem 0.6rem',
-                          borderRadius: '20px',
-                          background: 'white',
-                          border: `1px solid ${result.clinical_alert.level === 'ALTO' ? '#fca5a5' :
-                              result.clinical_alert.level === 'MODERADO' ? '#fdba74' : '#fcd34d'
-                            }`,
-                          color: '#374151',
-                          fontFamily: 'monospace'
-                        }}>
-                          {c}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                          Criterios activados:
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                          {result.clinical_alert.triggered_criteria.map((c, i) => (
+                            <span key={i} style={{
+                              fontSize: '0.75rem',
+                              padding: '0.25rem 0.6rem',
+                              borderRadius: '20px',
+                              background: 'white',
+                              border: `1px solid ${result.clinical_alert.level === 'ALTO' ? '#fca5a5' :
+                                  result.clinical_alert.level === 'MODERADO' ? '#fdba74' : '#fcd34d'
+                                }`,
+                              color: '#374151',
+                              fontFamily: 'monospace'
+                            }}>
+                              {c}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
 
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '0.5rem',
-                    padding: '0.6rem 0.75rem',
-                    background: 'white',
-                    borderRadius: '7px',
-                    fontSize: '0.8rem',
-                    color: '#374151',
-                    border: '1px solid #e5e7eb'
-                  }}>
-                    <ShieldCheck size={16} color="#059669" style={{ flexShrink: 0, marginTop: '1px' }} />
-                    <span>{result.clinical_alert.recommendation}</span>
-                  </div>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.5rem',
+                        padding: '0.6rem 0.75rem',
+                        background: 'white',
+                        borderRadius: '7px',
+                        fontSize: '0.8rem',
+                        color: '#374151',
+                        border: '1px solid #e5e7eb'
+                      }}>
+                        <ShieldCheck size={16} color="#059669" style={{ flexShrink: 0, marginTop: '1px' }} />
+                        <span>{result.clinical_alert.recommendation}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
