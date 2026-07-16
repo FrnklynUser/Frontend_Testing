@@ -1180,6 +1180,61 @@ const Dashboard = () => {
                 }}>
                   {result.prediction} ({(result.confidence * 100).toFixed(2)}%)
                 </div>
+
+                {/* Barra de probabilidad raw de melanoma */}
+                {result.raw_probability !== undefined && (
+                  <div style={{ marginTop: '0.85rem' }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '0.35rem'
+                    }}>
+                      <span style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 600 }}>
+                        Probabilidad de melanoma (modelo)
+                      </span>
+                      <span style={{
+                        fontSize: '0.85rem',
+                        fontWeight: 700,
+                        color: result.raw_probability >= 0.5 ? '#dc2626'
+                          : result.raw_probability >= 0.35 ? '#ea580c'
+                          : '#16a34a'
+                      }}>
+                        {(result.raw_probability * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                    <div style={{
+                      width: '100%',
+                      height: '8px',
+                      borderRadius: '99px',
+                      background: '#e5e7eb',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        height: '100%',
+                        width: `${(result.raw_probability * 100).toFixed(1)}%`,
+                        borderRadius: '99px',
+                        background: result.raw_probability >= 0.5
+                          ? 'linear-gradient(90deg, #f87171, #dc2626)'
+                          : result.raw_probability >= 0.35
+                          ? 'linear-gradient(90deg, #fb923c, #ea580c)'
+                          : 'linear-gradient(90deg, #4ade80, #16a34a)',
+                        transition: 'width 0.6s ease'
+                      }} />
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginTop: '0.25rem',
+                      fontSize: '0.7rem',
+                      color: '#9ca3af'
+                    }}>
+                      <span>0% (Nevus)</span>
+                      <span style={{ color: '#ea580c' }}>35% umbral</span>
+                      <span>100% (Melanoma)</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Alerta de Inconsistencia Clínica */}
