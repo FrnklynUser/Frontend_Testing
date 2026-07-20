@@ -17,7 +17,52 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Autocompletar usuario basado en nombre y apellido
+    if (name === 'name' || name === 'lastName') {
+      const firstName = formData.name.trim().split(' ')[0] || '';
+      const lastName = formData.lastName.trim().split(' ')[0] || '';
+
+      // Si estamos editando nombre, usar el nuevo valor
+      const currentFirstName = name === 'name' ? value.trim().split(' ')[0] : firstName;
+      const currentLastName = name === 'lastName' ? value.trim().split(' ')[0] : lastName;
+
+      if (currentFirstName && currentLastName) {
+        // Función para normalizar texto (minúsculas, sin acentos, sin espacios)
+        const normalizeText = (text) => {
+          return text
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '') // Remover acentos
+            .replace(/[^a-z0-9]/g, ''); // Solo letras y números
+        };
+
+        const autoUsername = `${normalizeText(currentFirstName)}.${normalizeText(currentLastName)}`;
+
+        // Solo autocompletar si el usuario no ha modificado manualmente el campo username
+        // o si el campo username está vacío
+        if (!formData.username || formData.username === generateAutoUsername()) {
+          setFormData(prev => ({ ...prev, username: autoUsername }));
+        }
+      }
+    }
+  };
+
+  const generateAutoUsername = () => {
+    const firstName = formData.name.trim().split(' ')[0] || '';
+    const lastName = formData.lastName.trim().split(' ')[0] || '';
+
+    const normalizeText = (text) => {
+      return text
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]/g, '');
+    };
+
+    return `${normalizeText(firstName)}.${normalizeText(lastName)}`;
   };
 
   const handleSubmit = async (e) => {
