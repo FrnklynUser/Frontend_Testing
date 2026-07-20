@@ -9,19 +9,15 @@ import {
   BarChart3,
   Activity,
   Image as ImageIcon,
-  AlertCircle,
   Info,
   Trash2,
   CheckCircle2,
   XCircle,
   Clock,
-  ShieldCheck,
   Microscope,
   RotateCcw,
   Bell,
   Settings,
-  ChevronDown,
-  ChevronUp,
   ChevronRight
 } from 'lucide-react';
 
@@ -39,7 +35,6 @@ const Dashboard = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [showClinicalForm, setShowClinicalForm] = useState(false);
   const [validationErrorData, setValidationErrorData] = useState(null);
-  const [showClinicalAlert, setShowClinicalAlert] = useState(false);
   const [showCameraOptions, setShowCameraOptions] = useState(false);
   const [clinicalData, setClinicalData] = useState({
     age: '',
@@ -895,7 +890,7 @@ const Dashboard = () => {
                     }}>
                       <Upload size={32} color="var(--primary)" />
                       <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '0.9rem' }}>
-                        Subir archivo
+                        Adjuntar
                       </p>
                     </div>
                   </label>
@@ -1290,100 +1285,6 @@ const Dashboard = () => {
                 </div>
 
               </div>
-
-              {/* Alerta de Inconsistencia Clínica */}
-              {result.clinical_alert && (
-                <div style={{
-                  marginTop: '1rem',
-                  padding: showClinicalAlert ? '1rem 1.25rem' : '0.75rem 1rem',
-                  borderRadius: '10px',
-                  border: `2px solid ${result.clinical_alert.level === 'ALTO' ? '#dc2626' :
-                      result.clinical_alert.level === 'MODERADO' ? '#ea580c' : '#d97706'
-                    }`,
-                  background: `${result.clinical_alert.level === 'ALTO' ? '#fef2f2' :
-                      result.clinical_alert.level === 'MODERADO' ? '#fff7ed' : '#fffbeb'
-                    }`,
-                  animation: 'fadeIn 0.4s ease',
-                  cursor: 'pointer'
-                }}
-                onClick={() => setShowClinicalAlert(!showClinicalAlert)}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: showClinicalAlert ? '0.6rem' : '0' }}>
-                    <AlertCircle size={20} color={
-                      result.clinical_alert.level === 'ALTO' ? '#dc2626' :
-                        result.clinical_alert.level === 'MODERADO' ? '#ea580c' : '#d97706'
-                    } />
-                    <span style={{
-                      fontWeight: 700,
-                      fontSize: '0.95rem',
-                      color: result.clinical_alert.level === 'ALTO' ? '#991b1b' :
-                        result.clinical_alert.level === 'MODERADO' ? '#9a3412' : '#92400e'
-                    }}>
-                      ALERTA CLÍNICA — RIESGO {result.clinical_alert.level}
-                    </span>
-                    <span style={{
-                      marginLeft: 'auto',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      padding: '0.2rem 0.6rem',
-                      borderRadius: '20px',
-                      background: result.clinical_alert.level === 'ALTO' ? '#dc2626' :
-                        result.clinical_alert.level === 'MODERADO' ? '#ea580c' : '#d97706',
-                      color: 'white'
-                    }}>
-                      {result.clinical_alert.suspicious_flags}/5 criterios ABCDE
-                    </span>
-                    {showClinicalAlert ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                  </div>
-
-                  {showClinicalAlert && (
-                    <>
-                      <p style={{ fontSize: '0.82rem', color: '#374151', marginBottom: '0.75rem', lineHeight: 1.5 }}>
-                        El modelo CNN clasifica como <strong>Nevus</strong>, pero los indicadores morfológicos
-                        extraídos presentan valores de sospecha clínica.
-                      </p>
-
-                      <div style={{ marginBottom: '0.75rem' }}>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
-                          Criterios activados:
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                          {result.clinical_alert.triggered_criteria.map((c, i) => (
-                            <span key={i} style={{
-                              fontSize: '0.75rem',
-                              padding: '0.25rem 0.6rem',
-                              borderRadius: '20px',
-                              background: 'white',
-                              border: `1px solid ${result.clinical_alert.level === 'ALTO' ? '#fca5a5' :
-                                  result.clinical_alert.level === 'MODERADO' ? '#fdba74' : '#fcd34d'
-                                }`,
-                              color: '#374151',
-                              fontFamily: 'monospace'
-                            }}>
-                              {c}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '0.5rem',
-                        padding: '0.6rem 0.75rem',
-                        background: 'white',
-                        borderRadius: '7px',
-                        fontSize: '0.8rem',
-                        color: '#374151',
-                        border: '1px solid #e5e7eb'
-                      }}>
-                        <ShieldCheck size={16} color="#059669" style={{ flexShrink: 0, marginTop: '1px' }} />
-                        <span>{result.clinical_alert.recommendation}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
 
               <div style={{ marginTop: '1.5rem' }}>
                 <h3 style={{ marginBottom: '0.25rem', fontSize: '1.1rem' }}>Explicabilidad (Grad-CAM):</h3>
