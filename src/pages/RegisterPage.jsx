@@ -39,7 +39,7 @@ const RegisterPage = () => {
             .replace(/[^a-z0-9]/g, ''); // Solo letras y números
         };
 
-        const autoUsername = `${normalizeText(currentFirstName)}.${normalizeText(currentLastName)}`;
+        const autoUsername = `${normalizeText(currentFirstName)}${normalizeText(currentLastName)}`;
 
         // Solo autocompletar si el usuario no ha modificado manualmente el campo username
         // o si el campo username está vacío
@@ -62,7 +62,7 @@ const RegisterPage = () => {
         .replace(/[^a-z0-9]/g, '');
     };
 
-    return `${normalizeText(firstName)}.${normalizeText(lastName)}`;
+    return `${normalizeText(firstName)}${normalizeText(lastName)}`;
   };
 
   const handleSubmit = async (e) => {

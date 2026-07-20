@@ -48,7 +48,7 @@ const Dashboard = () => {
     sun_exposure: ''
   });
   const [canClear, setCanClear] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(60);
 
   const getInitials = (name) => {
     const parts = name.split(' ').filter(p => !['dr.', 'dra.', 'dr', 'dra'].includes(p.toLowerCase()));
@@ -131,6 +131,14 @@ const Dashboard = () => {
 
   const handlePredict = async () => {
     if (!file) return;
+
+    // Validar que todos los datos clínicos estén completos
+    if (!clinicalData.age || !clinicalData.gender || !clinicalData.family_history || !clinicalData.sun_exposure) {
+      setError('Por favor, complete todos los datos clínicos del paciente (Edad, Sexo, Antecedentes familiares y Exposición solar) antes de analizar la imagen.');
+      setShowClinicalForm(true);
+      return;
+    }
+
     setLoading(true);
     setError('');
     setValidationErrorData(null);
@@ -180,7 +188,7 @@ const Dashboard = () => {
     setClinicalData({ age: '', gender: '', family_history: '', sun_exposure: '' });
     setShowClinicalForm(false);
     setCanClear(false);
-    setTimeLeft(120);
+    setTimeLeft(60);
   };
 
   const getStats = () => {
@@ -544,24 +552,25 @@ const Dashboard = () => {
         @media (max-width: 768px) {
           .main-grid { grid-template-columns: 1fr; }
           .metrics-grid { grid-template-columns: 1fr 1fr; }
-          .dashboard-wrapper { padding: 1rem; }
+          .dashboard-wrapper { padding: 0.75rem; }
           .section-title h2 { font-size: 1rem; }
-          .upload-area { padding: 1rem; }
+          .upload-area { padding: 0.75rem; }
           .upload-area > div > label > div,
           .upload-area > div > button {
-            height: 100px;
-            padding: 1rem;
+            height: 90px;
+            padding: 0.75rem;
           }
           .upload-area > div > label > div p,
           .upload-area > div > button p {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
           }
-          .preview-img { max-height: 200px; }
-          .result-card { padding: 1rem; }
-          .clinical-panel { padding: 1rem; }
+          .preview-img { max-height: 180px; }
+          .result-card { padding: 0.75rem; }
+          .clinical-panel { padding: 0.75rem; }
           .actions-group { flex-direction: column; }
           .action-btn { width: 100%; }
           .clear-btn { width: 100%; }
+          .clean-card { padding: 1rem; }
         }
 
         @media (max-width: 480px) {
@@ -569,9 +578,29 @@ const Dashboard = () => {
           .upload-area > div { flex-direction: column; }
           .upload-area > div > label,
           .upload-area > div > button { width: 100%; }
-          .header-content { padding: 1rem; }
-          .header-content h1 { font-size: 1.2rem; }
-          .header-content p { font-size: 0.85rem; }
+          .dashboard-wrapper { padding: 0.5rem; }
+          .clean-card { padding: 0.75rem; }
+          .header-content { padding: 0.75rem; }
+          .header-content h1 { font-size: 1.1rem; }
+          .header-content p { font-size: 0.8rem; }
+          .section-title h2 { font-size: 0.9rem; }
+          .upload-area > div > label > div,
+          .upload-area > div > button {
+            height: 80px;
+            padding: 0.5rem;
+          }
+          .upload-area > div > label > div p,
+          .upload-area > div > button p {
+            font-size: 0.7rem;
+          }
+          .preview-img { max-height: 150px; }
+          .result-card { padding: 0.5rem; }
+          .clinical-panel { padding: 0.5rem; }
+          .clinical-field label { font-size: 0.8rem; }
+          .clinical-field input,
+          .clinical-field select { font-size: 0.85rem; padding: 0.5rem; }
+          .action-btn { font-size: 0.85rem; padding: 0.6rem; }
+          .clear-btn { font-size: 0.85rem; padding: 0.6rem; }
         }
 
         .actions-group {
@@ -926,7 +955,7 @@ const Dashboard = () => {
                         }`}>
                         {Object.values(clinicalData).filter(v => v !== '').length > 0
                           ? `${Object.values(clinicalData).filter(v => v !== '').length}/4 ingresados`
-                          : 'Opcional'}
+                          : 'Obligatorio'}
                       </span>
                     </div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', transition: 'transform 0.2s', display: 'inline-block', transform: showClinicalForm ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
@@ -935,11 +964,11 @@ const Dashboard = () => {
                   {showClinicalForm && (
                     <div className="clinical-body">
                       <p className="clinical-hint">
-                        Proporcione datos clínicos del paciente para mejorar la precisión. Los campos vacíos usarán valores estadísticos del dataset de entrenamiento.
+                        Proporcione datos clínicos del paciente. Todos los campos son obligatorios para el análisis.
                       </p>
 
                       <div className="clinical-field">
-                        <label htmlFor="patient-age">Edad</label>
+                        <label htmlFor="patient-age">Edad *</label>
                         <input
                           id="patient-age"
                           type="number"
@@ -951,26 +980,26 @@ const Dashboard = () => {
                       </div>
 
                       <div className="clinical-field">
-                        <label htmlFor="patient-gender">Sexo biológico</label>
+                        <label htmlFor="patient-gender">Sexo biológico *</label>
                         <select
                           id="patient-gender"
                           value={clinicalData.gender}
                           onChange={e => setClinicalData(p => ({ ...p, gender: e.target.value }))}
                         >
-                          <option value="">-- Sin especificar --</option>
+                          <option value="">-- Seleccione --</option>
                           <option value="0">Masculino</option>
                           <option value="1">Femenino</option>
                         </select>
                       </div>
 
                       <div className="clinical-field">
-                        <label htmlFor="patient-family">Antecedentes familiares</label>
+                        <label htmlFor="patient-family">Antecedentes familiares *</label>
                         <select
                           id="patient-family"
                           value={clinicalData.family_history}
                           onChange={e => setClinicalData(p => ({ ...p, family_history: e.target.value }))}
                         >
-                          <option value="">-- Sin especificar --</option>
+                          <option value="">-- Seleccione --</option>
                           <option value="0">Ninguno</option>
                           <option value="1">Sí, hay antecedentes</option>
                           <option value="2">Incierto</option>
@@ -979,13 +1008,13 @@ const Dashboard = () => {
                       </div>
 
                       <div className="clinical-field">
-                        <label htmlFor="patient-sun">Exposición solar crónica</label>
+                        <label htmlFor="patient-sun">Exposición solar crónica *</label>
                         <select
                           id="patient-sun"
                           value={clinicalData.sun_exposure}
                           onChange={e => setClinicalData(p => ({ ...p, sun_exposure: e.target.value }))}
                         >
-                          <option value="">-- Sin especificar --</option>
+                          <option value="">-- Seleccione --</option>
                           <option value="0">Baja</option>
                           <option value="1">Media</option>
                           <option value="2">Alta</option>
@@ -1241,7 +1270,7 @@ const Dashboard = () => {
                 margin: '0 auto 1rem'
               }}></div>
               <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-              <p>Procesando con IA...</p>
+              <p>Procesando imagen, un momento...</p>
             </div>
           )}
 
