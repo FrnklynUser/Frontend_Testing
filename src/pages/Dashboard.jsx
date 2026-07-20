@@ -18,7 +18,8 @@ import {
   RotateCcw,
   Bell,
   Settings,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck
 } from 'lucide-react';
 
 const Dashboard = () => {
