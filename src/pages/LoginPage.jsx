@@ -112,6 +112,7 @@ const LoginPage = () => {
           border: 1px solid var(--border-color);
           border-radius: var(--radius-md);
           font-size: 1rem;
+          font-family: inherit;
           transition: border-color 0.2s;
         }
         .input-wrapper input:focus {

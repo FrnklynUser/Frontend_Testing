@@ -183,6 +183,7 @@ const RegisterPage = () => {
           border: 1px solid var(--border-color);
           border-radius: var(--radius-md);
           font-size: 0.95rem;
+          font-family: inherit;
         }
         .input-wrapper input:focus {
           outline: none;
