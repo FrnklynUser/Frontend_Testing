@@ -246,6 +246,7 @@ const Dashboard = () => {
     <div className="dashboard-wrapper">
       <style>{`
         .dashboard-wrapper {
+          width: 100%;
           max-width: 1280px;
           margin: 0 auto;
           padding: 2rem;
@@ -256,6 +257,7 @@ const Dashboard = () => {
           align-items: center;
           margin-bottom: 2rem;
           padding: 1.25rem 2rem;
+          gap: 1rem;
           background: white;
           border-radius: var(--radius-lg);
           box-shadow: var(--shadow-sm);
@@ -531,8 +533,13 @@ const Dashboard = () => {
           box-shadow: var(--shadow-sm);
           border-left: 4px solid;
         }
+        .history-table-wrapper {
+          width: 100%;
+          overflow-x: auto;
+        }
         .history-table {
           width: 100%;
+          min-width: 620px;
           border-collapse: collapse;
           background: white;
           border-radius: 8px;
@@ -543,6 +550,7 @@ const Dashboard = () => {
           padding: 1rem;
           text-align: left;
           border-bottom: 1px solid var(--border-color);
+          white-space: nowrap;
         }
         .history-table th {
           background: var(--bg-body);
@@ -573,24 +581,29 @@ const Dashboard = () => {
         }
 
         @media (max-width: 480px) {
+          .main-grid { gap: 1rem; }
           .metrics-grid { grid-template-columns: 1fr; }
+          .upload-area { padding: 0.75rem; }
           .upload-area > div { flex-direction: column; }
           .upload-area > div > label,
           .upload-area > div > button { width: 100%; }
           .dashboard-wrapper { padding: 0.5rem; }
           .clean-card { padding: 0.75rem; }
+          .app-header { flex-direction: column; align-items: stretch; padding: 1rem; }
+          .header-actions { flex-direction: column; align-items: stretch; gap: 1rem; width: 100%; }
+          .section-title { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+          .section-title h2 { font-size: 0.95rem; }
           .header-content { padding: 0.75rem; }
           .header-content h1 { font-size: 1.1rem; }
           .header-content p { font-size: 0.8rem; }
-          .section-title h2 { font-size: 0.9rem; }
           .upload-area > div > label > div,
           .upload-area > div > button {
-            height: 80px;
-            padding: 0.5rem;
+            height: auto;
+            padding: 0.75rem;
           }
           .upload-area > div > label > div p,
           .upload-area > div > button p {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
           }
           .preview-img { max-height: 150px; }
           .result-card { padding: 0.5rem; }
@@ -598,8 +611,15 @@ const Dashboard = () => {
           .clinical-field label { font-size: 0.8rem; }
           .clinical-field input,
           .clinical-field select { font-size: 0.85rem; padding: 0.5rem; }
+          .clinical-body { grid-template-columns: 1fr; }
+          .actions-group { flex-direction: column; }
           .action-btn { font-size: 0.85rem; padding: 0.6rem; }
           .clear-btn { font-size: 0.85rem; padding: 0.6rem; }
+          .history-table th,
+          .history-table td { padding: 0.8rem; }
+          .dashboard-wrapper { overflow-x: hidden; }
+          .history-table { min-width: 0; }
+          .history-table-wrapper { overflow-x: auto; }
         }
 
         .actions-group {
@@ -1019,10 +1039,8 @@ const Dashboard = () => {
                           <option value="2">Alta</option>
                           <option value="3">Muy alta</option>
                         </select>
+                      </div>
                     </div>
-                      );
-                    })()}
-                  </div>
                   )}
                 </div>
               )}
@@ -1403,17 +1421,18 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <table className="history-table">
-          <thead>
-            <tr>
-              <th>Fecha del Diagnóstico</th>
-              <th>Imagen</th>
-              <th>Predicción</th>
-              <th>Confianza</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div className="history-table-wrapper">
+          <table className="history-table">
+            <thead>
+              <tr>
+                <th>Fecha del Diagnóstico</th>
+                <th>Imagen</th>
+                <th>Predicción</th>
+                <th>Confianza</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
             {history.slice(0, 10).map((item) => (
               <tr key={item.id}>
                 <td>{item.timestamp}</td>
@@ -1442,7 +1461,8 @@ const Dashboard = () => {
               </tr>
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
 
       <footer style={{ marginTop: '2rem', textAlign: 'center', padding: '2rem' }}>
