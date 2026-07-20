@@ -258,7 +258,7 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <div className="form-group">
+            <div className="input-group">
               <label>Contraseña</label>
               <div className="input-wrapper">
                 <Lock className="input-icon" />
