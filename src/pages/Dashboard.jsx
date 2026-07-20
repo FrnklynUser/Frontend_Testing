@@ -19,6 +19,9 @@ import {
   Bell,
   Settings,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  AlertCircle,
   ShieldCheck
 } from 'lucide-react';
 
@@ -1016,8 +1019,10 @@ const Dashboard = () => {
                           <option value="2">Alta</option>
                           <option value="3">Muy alta</option>
                         </select>
-                      </div>
                     </div>
+                      );
+                    })()}
+                  </div>
                   )}
                 </div>
               )}
@@ -1062,34 +1067,34 @@ const Dashboard = () => {
                     Indicadores cuantitativos del procesamiento realizado
                   </p>
                   <div className="metrics-grid">
-                    <div className="metric-item" style={{ background: 'var(--primary-light)', borderColor: 'var(--primary)' }}>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-dark)' }}>TIEMPO</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{result.metrics.inference_time_ms} ms</div>
-                    </div>
-                    <div className="metric-item" style={{ background: '#f5f3ff', borderColor: '#8b5cf6' }}>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#5b21b6' }}>TAMAÑO</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>
-                        {(() => {
-                          const bytes = result.metrics.size_bytes;
-                          const sizeKb = bytes ? (bytes / 1024) : (result.metrics.image_size_kb ?? (result.metrics.image_size_mb ? result.metrics.image_size_mb * 1024 : 0));
-
-                          if (sizeKb < 0.01 && bytes > 0) {
-                            return `${bytes} Bytes`;
-                          }
-                          return sizeKb < 1024
-                            ? `${sizeKb.toFixed(2)} KB`
-                            : `${(sizeKb / 1024).toFixed(2)} MB`;
-                        })()}
-                      </div>
-                    </div>
-                    <div className="metric-item" style={{ background: '#fff7ed', borderColor: 'var(--accent)' }}>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9a3412' }}>CONFIANZA</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{result.metrics.confidence_percent}%</div>
-                    </div>
-                    <div className="metric-item" style={{ background: 'var(--success-bg)', borderColor: 'var(--success)' }}>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#065f46' }}>ESTADO</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--success)' }}>ÉXITO</div>
-                    </div>
+                    {(() => {
+                      const m = result.metrics || {};
+                      const bytes = m.size_bytes;
+                      const sizeKb = bytes ? (bytes / 1024) : (m.image_size_kb ?? (m.image_size_mb ? m.image_size_mb * 1024 : 0));
+                      const sizeLabel = sizeKb > 0
+                        ? (sizeKb < 1024 ? `${sizeKb.toFixed(2)} KB` : `${(sizeKb / 1024).toFixed(2)} MB`)
+                        : (bytes > 0 ? `${bytes} Bytes` : '—');
+                      return (
+                        <>
+                          <div className="metric-item" style={{ background: 'var(--primary-light)', borderColor: 'var(--primary)' }}>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-dark)' }}>TIEMPO</div>
+                            <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{m.inference_time_ms != null ? `${m.inference_time_ms} ms` : '—'}</div>
+                          </div>
+                          <div className="metric-item" style={{ background: '#f5f3ff', borderColor: '#8b5cf6' }}>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#5b21b6' }}>TAMAÑO</div>
+                            <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{sizeLabel}</div>
+                          </div>
+                          <div className="metric-item" style={{ background: '#fff7ed', borderColor: 'var(--accent)' }}>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9a3412' }}>CONFIANZA</div>
+                            <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{m.confidence_percent != null ? `${m.confidence_percent}%` : '—'}</div>
+                          </div>
+                          <div className="metric-item" style={{ background: 'var(--success-bg)', borderColor: 'var(--success)' }}>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#065f46' }}>ESTADO</div>
+                            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--success)' }}>ÉXITO</div>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
               )}
@@ -1282,7 +1287,7 @@ const Dashboard = () => {
                   fontWeight: 700,
                   fontSize: '1.25rem'
                 }}>
-                  {result.prediction === 'Melanoma acral' ? 'Melanoma' : result.prediction} ({(result.confidence * 100).toFixed(2)}%)
+                  {result.prediction === 'Melanoma acral' ? 'Melanoma' : result.prediction} {result.confidence != null ? `(${(result.confidence * 100).toFixed(2)}%)` : ''}
                 </div>
 
               </div>
@@ -1309,7 +1314,7 @@ const Dashboard = () => {
                     ];
                     
                     return priorityKeys
-                      .filter(key => result.top_features[key] !== undefined)
+                      .filter(key => result.top_features[key] != null && typeof result.top_features[key] === 'number')
                       .map(key => {
                         const val = result.top_features[key];
                         return (
@@ -1346,6 +1351,7 @@ const Dashboard = () => {
                         ];
                         return Object.entries(result.top_features)
                           .filter(([key]) => !priorityKeys.includes(key))
+                          .filter(([, val]) => val != null && typeof val === 'number')
                           .map(([key, val]) => {
                             let displayVal = val.toFixed(3);
                             if (key === 'age') displayVal = Math.round(val);
