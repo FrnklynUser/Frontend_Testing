@@ -8,14 +8,12 @@ const RegisterPage = () => {
     name: '',
     lastName: '',
     username: '',
-    password: '',
-    confirmPassword: ''
+    password: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -27,10 +25,10 @@ const RegisterPage = () => {
     setError('');
     setSuccess('');
 
-    const { name, lastName, username, password, confirmPassword } = formData;
+    const { name, lastName, username, password } = formData;
 
     // 1. Validación de campos vacíos o solo espacios
-    if (!name.trim() || !lastName.trim() || !username.trim() || !password || !confirmPassword) {
+    if (!name.trim() || !lastName.trim() || !username.trim() || !password) {
       setError('Todos los campos son obligatorios y no pueden contener solo espacios');
       return;
     }
@@ -56,12 +54,6 @@ const RegisterPage = () => {
     // 4. Validación de Contraseña (Min 8 caracteres)
     if (password.length < 8) {
       setError('La seguridad es prioridad. La contraseña debe tener al menos 8 caracteres');
-      return;
-    }
-
-    // 5. Coincidencia de contraseñas
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
       return;
     }
 
@@ -229,6 +221,16 @@ const RegisterPage = () => {
         }
         @media (max-width: 900px) {
           .welcome-side { display: none; }
+          .form-side { padding: 1rem; }
+          .login-card { padding: 1.5rem; }
+        }
+
+        @media (max-width: 480px) {
+          .login-card { padding: 1rem; }
+          .form-header h2 { font-size: 1.3rem; }
+          .input-group label { font-size: 0.85rem; }
+          .input-wrapper input { font-size: 0.9rem; }
+          .form-actions { flex-direction: column; }
         }
       `}</style>
 
@@ -334,28 +336,6 @@ const RegisterPage = () => {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
-
-            <div className="input-group">
-              <label>Confirmar Contraseña</label>
-              <div className="input-wrapper">
-                <Lock className="input-icon" />
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  placeholder="••••••••"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>

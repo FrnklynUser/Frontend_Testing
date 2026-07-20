@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { predictService, historyService } from '../services/api';
 import {
   Upload,
+  Camera,
   LogOut,
   History,
   BarChart3,
@@ -39,6 +40,7 @@ const Dashboard = () => {
   const [showClinicalForm, setShowClinicalForm] = useState(false);
   const [validationErrorData, setValidationErrorData] = useState(null);
   const [showClinicalAlert, setShowClinicalAlert] = useState(false);
+  const [showCameraOptions, setShowCameraOptions] = useState(false);
   const [clinicalData, setClinicalData] = useState({
     age: '',
     gender: '',
@@ -99,10 +101,32 @@ const Dashboard = () => {
       setPreview(URL.createObjectURL(selectedFile));
       setResult(null);
       setError('');
+      setShowCameraOptions(false);
       // Resetear datos clínicos al cambiar imagen
       setClinicalData({ age: '', gender: '', family_history: '', sun_exposure: '' });
       setShowClinicalForm(false);
     }
+  };
+
+  const handleCameraCapture = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment'; // Usa la cámara trasera en móviles
+    input.onchange = (e) => {
+      const selectedFile = e.target.files[0];
+      if (selectedFile) {
+        setFile(selectedFile);
+        setPreview(URL.createObjectURL(selectedFile));
+        setResult(null);
+        setError('');
+        setShowCameraOptions(false);
+        // Resetear datos clínicos al cambiar imagen
+        setClinicalData({ age: '', gender: '', family_history: '', sun_exposure: '' });
+        setShowClinicalForm(false);
+      }
+    };
+    input.click();
   };
 
   const handlePredict = async () => {
@@ -520,6 +544,34 @@ const Dashboard = () => {
         @media (max-width: 768px) {
           .main-grid { grid-template-columns: 1fr; }
           .metrics-grid { grid-template-columns: 1fr 1fr; }
+          .dashboard-wrapper { padding: 1rem; }
+          .section-title h2 { font-size: 1rem; }
+          .upload-area { padding: 1rem; }
+          .upload-area > div > label > div,
+          .upload-area > div > button {
+            height: 100px;
+            padding: 1rem;
+          }
+          .upload-area > div > label > div p,
+          .upload-area > div > button p {
+            font-size: 0.8rem;
+          }
+          .preview-img { max-height: 200px; }
+          .result-card { padding: 1rem; }
+          .clinical-panel { padding: 1rem; }
+          .actions-group { flex-direction: column; }
+          .action-btn { width: 100%; }
+          .clear-btn { width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+          .metrics-grid { grid-template-columns: 1fr; }
+          .upload-area > div { flex-direction: column; }
+          .upload-area > div > label,
+          .upload-area > div > button { width: 100%; }
+          .header-content { padding: 1rem; }
+          .header-content h1 { font-size: 1.2rem; }
+          .header-content p { font-size: 0.85rem; }
         }
 
         .actions-group {
@@ -794,27 +846,53 @@ const Dashboard = () => {
             <h2 style={{ fontSize: '1.2rem' }}>Cargar Imagen</h2>
           </div>
 
-          <label className={`upload-area ${file ? 'compact' : ''} ${result ? 'disabled' : ''}`}>
-            <input type="file" hidden onChange={handleFileChange} accept="image/*" disabled={!!result} />
+          <div className={`upload-area ${file ? 'compact' : ''} ${result ? 'disabled' : ''}`}>
             {!file ? (
               <>
-                <div style={{
-                  backgroundColor: 'var(--bg-body)',
-                  padding: '1.5rem',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: '0.5rem'
-                }}>
-                  <Upload size={32} color="var(--primary)" />
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                  <label style={{ flex: 1, cursor: 'pointer' }}>
+                    <input type="file" hidden onChange={handleFileChange} accept="image/*" disabled={!!result} />
+                    <div style={{
+                      backgroundColor: 'var(--bg-body)',
+                      padding: '1.5rem',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '2px dashed var(--border-color)',
+                      transition: 'all 0.2s',
+                      height: '120px'
+                    }}>
+                      <Upload size={32} color="var(--primary)" />
+                      <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                        Subir archivo
+                      </p>
+                    </div>
+                  </label>
+                  <button onClick={handleCameraCapture} disabled={!!result} style={{
+                    flex: 1,
+                    backgroundColor: 'var(--bg-body)',
+                    padding: '1.5rem',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '2px dashed var(--border-color)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    height: '120px'
+                  }}>
+                    <Camera size={32} color="var(--primary)" />
+                    <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                      Usar cámara
+                    </p>
+                  </button>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
-                    Haga clic para seleccionar imagen
-                  </p>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                    o arrastre y suelte el archivo aquí
+                    Selecciona una opción para cargar tu imagen
                   </p>
                 </div>
               </>
@@ -827,7 +905,7 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
-          </label>
+          </div>
 
           {preview && (
             <div style={{ marginTop: '1.5rem' }}>

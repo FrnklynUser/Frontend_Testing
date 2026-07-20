@@ -189,6 +189,15 @@ const LoginPage = () => {
 
         @media (max-width: 900px) {
           .welcome-side { display: none; }
+          .form-side { padding: 1rem; }
+          .login-card { padding: 1.5rem; }
+        }
+
+        @media (max-width: 480px) {
+          .login-card { padding: 1rem; }
+          .form-header h2 { font-size: 1.5rem; }
+          .input-group label { font-size: 0.85rem; }
+          .input-wrapper input { font-size: 0.9rem; }
         }
       `}</style>
 
