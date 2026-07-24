@@ -1,0 +1,414 @@
+/* ==========================================
+   ESTILOS RESPONSIVOS PARA MÓVIL (< 768px)
+   Diseño inspirado en aplicación nativa moderna
+   ========================================== */
+
+@media (max-width: 767px) {
+  /* Layout y Contenedores */
+  .dashboard-wrapper {
+    padding: 0.75rem;
+    overflow-x: hidden;
+  }
+
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .clean-card {
+    padding: 1.25rem;
+    border-radius: 14px; /* Bordes más redondeados para look de app móvil */
+  }
+
+  /* Header Compacto tipo App Nativa */
+  .app-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+    border-radius: 14px;
+    gap: 0.5rem;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .header-brand h1 {
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .header-brand .badge-system {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.3rem;
+  }
+
+  .header-brand p {
+    display: none; /* Ocultar textos secundarios largos */
+  }
+
+  .header-status {
+    display: none; /* Ocultar el estado del servidor en móviles para dar espacio */
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .user-profile {
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    background: transparent;
+    border: none;
+    gap: 0.5rem;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .user-details {
+    display: none; /* Ocultar detalles del usuario para maximizar espacio */
+  }
+
+  .logout-btn {
+    height: 36px;
+    padding: 0 0.75rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    gap: 0.25rem;
+  }
+
+  .logout-btn span {
+    display: none; /* Ocultar el texto "Cerrar Sesión" y dejar solo el icono en móviles extremadamente angostos si es necesario, o mantenerlo corto */
+  }
+  
+  /* Habilitar texto corto de logout si hay espacio o solo icono */
+  .logout-btn::after {
+    content: "Salir";
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  /* Info Bar */
+  .info-bar {
+    padding: 0.85rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    gap: 0.75rem;
+  }
+
+  .info-bar p {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  /* Area de Carga y Botones del Input */
+  .upload-area {
+    padding: 1.5rem;
+    min-height: 180px;
+    border-radius: 12px;
+  }
+
+  .upload-area.compact {
+    padding: 0.85rem 1rem;
+    min-height: 60px;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  /* Botones "Adjuntar" y "Usar cámara" del mismo tamaño y táctiles */
+  .upload-area > div:first-of-type {
+    display: flex;
+    flex-direction: row !important; /* Asegurar fila en móvil */
+    gap: 0.75rem !important;
+    width: 100%;
+  }
+
+  .upload-area > div > button {
+    flex: 1;
+    height: 90px !important; /* Altura optimizada para móviles */
+    padding: 0.85rem !important;
+    border-radius: 12px !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .upload-area > div > button p {
+    font-size: 0.8rem !important;
+    margin-top: 0.35rem !important;
+  }
+
+  .upload-area > div > button svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .preview-img {
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+
+  /* Panel Clínico Móvil */
+  .clinical-panel {
+    border-radius: 12px;
+    margin-top: 1.25rem;
+  }
+
+  .clinical-header {
+    padding: 0.85rem 1rem;
+  }
+
+  .clinical-header-left {
+    font-size: 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .clinical-body {
+    grid-template-columns: 1fr !important; /* Forzar columna única en móvil */
+    gap: 0.85rem;
+    padding: 0.85rem;
+  }
+
+  .clinical-field label {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .clinical-field input,
+  .clinical-field select {
+    height: 44px; /* Altura ideal para toques táctiles según estándares de accesibilidad */
+    font-size: 0.9rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+  }
+
+  .clinical-hint {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  /* Botones de acción del análisis */
+  .actions-group {
+    flex-direction: column; /* Colocar botones en vertical en móviles */
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .action-btn, .clear-btn {
+    width: 100%;
+    height: 46px; /* Botones grandes y fáciles de pulsar */
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
+  /* Resultados y Métricas */
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important; /* Cuadrícula 2x2 en móvil */
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .metric-item {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .metric-item div:first-child {
+    font-size: 0.65rem;
+  }
+
+  .metric-item div:last-child {
+    font-size: 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr !important; /* Una sola columna para las características */
+    gap: 0.4rem;
+  }
+
+  .feature-tag {
+    padding: 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+
+  /* Historial: Conversión de Tabla a Tarjetas Táctiles */
+  .history-table-wrapper {
+    overflow: visible; /* Quitar scroll horizontal de la tabla */
+  }
+
+  .history-table {
+    min-width: 100% !important;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .history-table, 
+  .history-table thead, 
+  .history-table tbody, 
+  .history-table th, 
+  .history-table td, 
+  .history-table tr {
+    display: block; /* Descomponer la tabla */
+  }
+
+  .history-table thead {
+    display: none; /* Ocultar la cabecera original */
+  }
+
+  .history-table tr {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1rem;
+    margin-bottom: 0.85rem;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+
+  .history-table td {
+    border: none;
+    padding: 0.6rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed #f1f5f9;
+    font-size: 0.85rem;
+  }
+
+  .history-table td:last-child {
+    border-bottom: none;
+    justify-content: flex-end;
+    padding-top: 0.75rem;
+  }
+
+  /* Inyección de etiquetas de celda utilizando ::before */
+  .history-table td:nth-of-type(1)::before {
+    content: "Fecha";
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  .history-table td:nth-of-type(2)::before {
+    content: "ID/Imagen";
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  .history-table td:nth-of-type(3)::before {
+    content: "Predicción";
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  .history-table td:nth-of-type(4)::before {
+    content: "Confianza";
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  /* Ajustes del botón de eliminar */
+  .history-table td:nth-of-type(5) button {
+    background: var(--danger-bg) !important;
+    color: var(--danger) !important;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  .history-table td:nth-of-type(5) button::after {
+    content: "Eliminar";
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr !important; /* Tarjetas de estadísticas apiladas */
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stat-card div:first-child {
+    font-weight: 700;
+  }
+
+  .stat-card div:last-child {
+    font-size: 1.25rem;
+  }
+
+  /* Modales */
+  .modal-content {
+    width: calc(100% - 2rem);
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .cancel-btn, .confirm-btn {
+    width: 100%;
+    height: 44px;
+  }
+
+  /* Login y Registro en Móvil */
+  .login-container {
+    flex-direction: column;
+  }
+
+  .welcome-side {
+    display: none !important; /* Ocultar panel lateral decorativo en móvil */
+  }
+
+  .form-side {
+    padding: 1.25rem;
+    width: 100%;
+  }
+
+  .login-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .form-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .form-actions .submit-btn,
+  .form-actions a {
+    width: 100%;
+    height: 44px;
+    margin: 0 !important;
+  }
+}

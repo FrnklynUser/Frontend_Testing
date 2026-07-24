@@ -1,3 +1,10 @@
+@import './styles/pages/login.css';
+@import './styles/pages/register.css';
+@import './styles/pages/dashboard.css';
+@import './styles/responsive/mobile.css';
+@import './styles/responsive/tablet.css';
+@import './styles/responsive/desktop.css';
+
 :root {
   /* Paleta Médica Unificada */
   --primary: #0369a1;       /* Sky-700 */

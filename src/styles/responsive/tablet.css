@@ -1,0 +1,51 @@
+/* ==========================================
+   ESTILOS RESPONSIVOS PARA TABLET (768px - 1023px)
+   ========================================== */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Layout y Contenedores */
+  .dashboard-wrapper {
+    padding: 1.5rem;
+  }
+
+  .main-grid {
+    grid-template-columns: 1fr; /* Una columna en tablets si el contenido es denso, o mantener dos columnas con gap ajustado */
+    gap: 1.5rem;
+  }
+
+  /* Si decidimos mantener dos columnas, ajustar el tamaño de los elementos */
+  @media (min-width: 900px) {
+    .main-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Header */
+  .app-header {
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .header-brand h1 {
+    font-size: 1.15rem;
+  }
+
+  .header-actions {
+    gap: 1rem;
+  }
+
+  /* Login y Registro */
+  .login-container {
+    flex-direction: row;
+  }
+
+  /* Ocultar sección welcome en pantallas menores de 900px como en el diseño original */
+  @media (max-width: 900px) {
+    .welcome-side {
+      display: none !important;
+    }
+    .form-side {
+      padding: 1.5rem;
+    }
+  }
+}

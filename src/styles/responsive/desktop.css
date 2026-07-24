@@ -1,0 +1,30 @@
+/* ==========================================
+   ESTILOS RESPONSIVOS PARA ESCRITORIO (>= 1024px)
+   ========================================== */
+
+@media (min-width: 1024px) {
+  /* Layout y Contenedores */
+  .dashboard-wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .main-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  /* Alineaciones y Espaciados de Escritorio */
+  .upload-area {
+    min-height: 250px;
+  }
+
+  .clinical-body {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .history-table-wrapper {
+    overflow-x: auto;
+  }
+}
