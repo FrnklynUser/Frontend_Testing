@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/api';
+import { useToast } from '../context/ToastContext';
 import { Microscope, User, Lock, UserPlus, AlertCircle, ArrowLeft, Eye, EyeOff, CheckCircle } from 'lucide-react';
 
 const RegisterPage = () => {
@@ -15,6 +16,7 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,31 +76,41 @@ const RegisterPage = () => {
 
     // 1. Validación de campos vacíos o solo espacios
     if (!name.trim() || !lastName.trim() || !username.trim() || !password) {
-      setError('Todos los campos son obligatorios y no pueden contener solo espacios');
+      const msg = 'Todos los campos son obligatorios y no pueden contener solo espacios';
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
     // 2. Validación de Nombre y Apellido (Solo letras y espacios, min 2)
     const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,}$/;
     if (!nameRegex.test(name.trim())) {
-      setError('El nombre debe tener al menos 2 caracteres y solo contener letras');
+      const msg = 'El nombre debe tener al menos 2 caracteres y solo contener letras';
+      setError(msg);
+      toast.error(msg);
       return;
     }
     if (!nameRegex.test(lastName.trim())) {
-      setError('El apellido debe tener al menos 2 caracteres y solo contener letras');
+      const msg = 'El apellido debe tener al menos 2 caracteres y solo contener letras';
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
     // 3. Validación de Usuario (Alfanumérico, sin espacios, min 4)
     const usernameRegex = /^[a-zA-Z0-9_]{4,}$/;
     if (!usernameRegex.test(username)) {
-      setError('El usuario debe tener al menos 4 caracteres, sin espacios y solo letras, números o guiones bajos');
+      const msg = 'El usuario debe tener al menos 4 caracteres, sin espacios y solo letras, números o guiones bajos';
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
     // 4. Validación de Contraseña (Min 8 caracteres)
     if (password.length < 8) {
-      setError('La seguridad es prioridad. La contraseña debe tener al menos 8 caracteres');
+      const msg = 'La seguridad es prioridad. La contraseña debe tener al menos 8 caracteres';
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -106,7 +118,9 @@ const RegisterPage = () => {
     try {
       const fullName = `${name.trim()} ${lastName.trim()}`;
       const data = await authService.register(username, password, fullName);
-      setSuccess(data.message + '. Redirigiendo al login...');
+      const successMsg = data.message + '. Redirigiendo al login...';
+      setSuccess(successMsg);
+      toast.success(data.message || 'Cuenta creada exitosamente.');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
       // Manejo mejorado de errores del backend
@@ -114,6 +128,7 @@ const RegisterPage = () => {
         err.response?.data?.message ||
         'Error en el servidor. Intente más tarde.';
       setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { authService } from '../services/api';
 import { Microscope, User, Lock, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 
@@ -11,6 +12,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -18,17 +20,22 @@ const LoginPage = () => {
     setError('');
 
     if (!username || !password) {
-      setError('Por favor, complete todos los campos obligatorios.');
+      const msg = 'Por favor, complete todos los campos obligatorios.';
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
     setLoading(true);
     try {
       const data = await authService.login(username, password);
+      toast.success('¡Inicio de sesión exitoso! Bienvenido de nuevo.');
       login(data.user);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Usuario o contraseña incorrectos. Verifique sus datos.');
+      const msg = err.response?.data?.detail || 'Usuario o contraseña incorrectos. Verifique sus datos.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

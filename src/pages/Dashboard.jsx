@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { predictService, historyService } from '../services/api';
 import {
   Upload,
@@ -27,6 +28,8 @@ import {
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const fileInputRef = useRef(null);
+  const toast = useToast();
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -133,7 +136,9 @@ const Dashboard = () => {
 
     // Validar que todos los datos clínicos estén completos
     if (!clinicalData.age || !clinicalData.gender || !clinicalData.family_history || !clinicalData.sun_exposure) {
-      setError('Por favor, complete todos los datos clínicos del paciente (Edad, Sexo, Antecedentes familiares y Exposición solar) antes de analizar la imagen.');
+      const msg = 'Por favor, complete todos los datos clínicos del paciente (Edad, Sexo, Antecedentes familiares y Exposición solar) antes de analizar la imagen.';
+      setError(msg);
+      toast.warning('Por favor complete todos los datos clínicos.');
       setShowClinicalForm(true);
       return;
     }
@@ -144,17 +149,21 @@ const Dashboard = () => {
     try {
       const data = await predictService.predict(user.username, file, clinicalData);
       setResult(data);
+      toast.success('Análisis de lesión completado con éxito.');
       setShowAllFeatures(false); // Resetear estado de expansión
       fetchHistory();
     } catch (err) {
       // Manejo especial para imagen no dermatoscópica (HTTP 422)
       const detail = err.response?.data?.detail;
+      let msg = '';
       if (err.response?.status === 422 && detail?.error === 'imagen_no_dermatoscopica') {
         setValidationErrorData(detail);
-        setError(detail.message);
+        msg = detail.message;
       } else {
-        setError(detail?.message || detail || 'Error al procesar la imagen.');
+        msg = detail?.message || detail || 'Error al procesar la imagen.';
       }
+      setError(msg);
+      toast.error('Error al analizar la lesión.');
     } finally {
       setLoading(false);
     }
@@ -562,12 +571,10 @@ const Dashboard = () => {
           .dashboard-wrapper { padding: 0.75rem; }
           .section-title h2 { font-size: 1rem; }
           .upload-area { padding: 0.75rem; }
-          .upload-area > div > label > div,
           .upload-area > div > button {
             height: 90px;
             padding: 0.75rem;
           }
-          .upload-area > div > label > div p,
           .upload-area > div > button p {
             font-size: 0.75rem;
           }
@@ -585,7 +592,6 @@ const Dashboard = () => {
           .metrics-grid { grid-template-columns: 1fr; }
           .upload-area { padding: 0.75rem; }
           .upload-area > div { flex-direction: column; }
-          .upload-area > div > label,
           .upload-area > div > button { width: 100%; }
           .dashboard-wrapper { padding: 0.5rem; }
           .clean-card { padding: 0.75rem; }
@@ -596,12 +602,10 @@ const Dashboard = () => {
           .header-content { padding: 0.75rem; }
           .header-content h1 { font-size: 1.1rem; }
           .header-content p { font-size: 0.8rem; }
-          .upload-area > div > label > div,
           .upload-area > div > button {
             height: auto;
             padding: 0.75rem;
           }
-          .upload-area > div > label > div p,
           .upload-area > div > button p {
             font-size: 0.75rem;
           }
@@ -881,7 +885,7 @@ const Dashboard = () => {
           <div style={{ fontWeight: 600 }}>Sistema de Análisis Dermatoscópico</div>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
             Se aceptan imágenes dermatoscópicas del dataset y también imágenes externas descargadas de internet.
-            Si dispone de datos clínicos del paciente, puede ingresarlos opcionalmente para mejorar la precisión del diagnóstico.
+            Debe ingresar los datos clínicos obligatorios del paciente para realizar el análisis de diagnóstico.
           </p>
         </div>
       </div>
@@ -897,10 +901,21 @@ const Dashboard = () => {
           <div className={`upload-area ${file ? 'compact' : ''} ${result ? 'disabled' : ''}`}>
             {!file ? (
               <>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                  <label style={{ flex: 1, cursor: 'pointer' }}>
-                    <input type="file" hidden onChange={handleFileChange} accept="image/*" disabled={!!result} />
-                    <div style={{
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', width: '100%' }}>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    hidden
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    disabled={!!result}
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={!!result}
+                    type="button"
+                    style={{
+                      flex: 1,
                       backgroundColor: 'var(--bg-body)',
                       padding: '1.5rem',
                       borderRadius: '12px',
@@ -909,31 +924,41 @@ const Dashboard = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       border: '2px dashed var(--border-color)',
+                      cursor: 'pointer',
                       transition: 'all 0.2s',
-                      height: '120px'
-                    }}>
-                      <Upload size={32} color="var(--primary)" />
-                      <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '0.9rem' }}>
-                        Adjuntar
-                      </p>
-                    </div>
-                  </label>
-                  <button onClick={handleCameraCapture} disabled={!!result} style={{
-                    flex: 1,
-                    backgroundColor: 'var(--bg-body)',
-                    padding: '1.5rem',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '2px dashed var(--border-color)',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    height: '120px'
-                  }}>
+                      height: '120px',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box'
+                    }}
+                  >
+                    <Upload size={32} color="var(--primary)" />
+                    <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '0.9rem', margin: 0 }}>
+                      Adjuntar
+                    </p>
+                  </button>
+                  <button
+                    onClick={handleCameraCapture}
+                    disabled={!!result}
+                    type="button"
+                    style={{
+                      flex: 1,
+                      backgroundColor: 'var(--bg-body)',
+                      padding: '1.5rem',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '2px dashed var(--border-color)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      height: '120px',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box'
+                    }}
+                  >
                     <Camera size={32} color="var(--primary)" />
-                    <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                    <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '0.9rem', margin: 0 }}>
                       Usar cámara
                     </p>
                   </button>
