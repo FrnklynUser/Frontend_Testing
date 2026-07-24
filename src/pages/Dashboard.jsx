@@ -96,11 +96,26 @@ const Dashboard = () => {
     }
   };
 
+  const generateShortName = (originalName) => {
+    const ext = originalName.split('.').pop();
+    const now = new Date();
+    const time = `${String(now.getHours()).padStart(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}-${String(now.getSeconds()).padStart(2,'0')}`;
+    return `img_${time}.${ext}`;
+  };
+
+  const truncateFileName = (name, maxLen = 20) => {
+    if (name.length <= maxLen) return name;
+    const ext = name.split('.').pop();
+    const base = name.substring(0, name.length - ext.length - 1);
+    const available = maxLen - ext.length - 4; // 4 = '...' + '.'
+    return `${base.substring(0, available)}...${ext}`;
+  };
+
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      const extension = selectedFile.name.split('.').pop();
-      const newFile = new File([selectedFile], `${Date.now()}.${extension}`, { type: selectedFile.type });
+      const shortName = generateShortName(selectedFile.name);
+      const newFile = new File([selectedFile], shortName, { type: selectedFile.type });
       setFile(newFile);
       setPreview(URL.createObjectURL(newFile));
       setResult(null);
@@ -120,8 +135,10 @@ const Dashboard = () => {
     input.onchange = (e) => {
       const selectedFile = e.target.files[0];
       if (selectedFile) {
-        setFile(selectedFile);
-        setPreview(URL.createObjectURL(selectedFile));
+        const shortName = generateShortName(selectedFile.name);
+        const newFile = new File([selectedFile], shortName, { type: selectedFile.type });
+        setFile(newFile);
+        setPreview(URL.createObjectURL(newFile));
         setResult(null);
         setError('');
         setShowCameraOptions(false);
@@ -405,10 +422,10 @@ const Dashboard = () => {
                 </div>
               </>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%', justifyContent: 'center' }}>
-                <CheckCircle2 size={24} color="var(--success)" />
-                <div style={{ textAlign: 'left' }}>
-                  <p style={{ fontWeight: 600, fontSize: '0.9rem' }}>{file.name}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%', justifyContent: 'center', overflow: 'hidden' }}>
+                <CheckCircle2 size={24} color="var(--success)" style={{ flexShrink: 0 }} />
+                <div style={{ textAlign: 'left', overflow: 'hidden', minWidth: 0 }}>
+                  <p style={{ fontWeight: 600, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{truncateFileName(file.name)}</p>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Click para cambiar imagen</p>
                 </div>
               </div>
@@ -914,7 +931,7 @@ const Dashboard = () => {
               </tr>
             ))}
             {history.length === 0 && (
-              <tr>
+              <tr className="empty-history-row">
                 <td colSpan="5" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
                   No hay análisis previos
                 </td>

@@ -411,4 +411,36 @@
     height: 44px;
     margin: 0 !important;
   }
+
+  /* Fila vacía del historial: ocultar pseudo-etiquetas y centrar texto */
+  .empty-history-row td {
+    display: block !important;
+    text-align: center;
+    justify-content: center !important;
+  }
+
+  .empty-history-row td::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* Evitar desborde de texto en celdas del historial */
+  .history-table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    max-width: 100%;
+  }
+
+  /* Nombre de archivo en la zona de carga */
+  .upload-area.compact {
+    overflow: hidden;
+  }
+
+  .upload-area.compact p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
 }
