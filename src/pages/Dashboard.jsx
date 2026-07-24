@@ -99,7 +99,7 @@ const Dashboard = () => {
   const generateShortName = (originalName) => {
     const ext = originalName.split('.').pop();
     const now = new Date();
-    const time = `${String(now.getHours()).padStart(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}-${String(now.getSeconds()).padStart(2,'0')}`;
+    const time = `${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
     return `img_${time}.${ext}`;
   };
 
@@ -766,7 +766,7 @@ const Dashboard = () => {
                 margin: '0 auto 1rem'
               }}></div>
               <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-              <p>Procesando imagen, un momento...</p>
+              <p>Procesando análisis, un momento...</p>
             </div>
           )}
 
@@ -807,7 +807,7 @@ const Dashboard = () => {
                       'asymmetry_score', 'border_irregularity', 'color_variation', 'diameter',
                       'contrast', 'homogeneity', 'correlation', 'eccentricity', 'compactness'
                     ];
-                    
+
                     return priorityKeys
                       .filter(key => result.top_features[key] != null && typeof result.top_features[key] === 'number')
                       .map(key => {
@@ -822,8 +822,8 @@ const Dashboard = () => {
                 </div>
 
                 {/* Sección Expandible para las 16 restantes */}
-                <button 
-                  className="show-more-btn" 
+                <button
+                  className="show-more-btn"
                   onClick={() => setShowAllFeatures(!showAllFeatures)}
                 >
                   {showAllFeatures ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -859,7 +859,7 @@ const Dashboard = () => {
                               const maps = { 0: 'Baja', 1: 'Media', 2: 'Alta', 3: 'Muy alta' };
                               displayVal = maps[Math.round(val)] || val;
                             }
-                            
+
                             return (
                               <div key={key} className="feature-tag" style={{ background: '#fcfcfc', borderStyle: 'dotted' }}>
                                 <strong>{traducirFeature(key)}:</strong> {displayVal}
@@ -910,34 +910,34 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-            {history.slice(0, 10).map((item) => (
-              <tr key={item.id}>
-                <td>{item.timestamp}</td>
-                <td>{item.image_name}</td>
-                <td>
-                  <span style={{
-                    color: (item.prediction === 'Melanoma' || item.prediction === 'Melanoma acral') ? 'var(--danger)' : 'var(--success)',
-                    fontWeight: 600
-                  }}>
-                    {(item.prediction === 'Melanoma' || item.prediction === 'Melanoma acral') ? '🔴' : '🟢'} {item.prediction === 'Melanoma acral' ? 'Melanoma' : item.prediction}
-                  </span>
-                </td>
-                <td>{(item.confidence * 100).toFixed(1)}%</td>
-                <td>
-                  <button onClick={() => handleDeleteHistory(item.id)} style={{ color: 'var(--danger)', background: 'none', border: 'none' }}>
-                    <Trash2 size={18} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {history.length === 0 && (
-              <tr className="empty-history-row">
-                <td colSpan="5" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
-                  No hay análisis previos
-                </td>
-              </tr>
-            )}
-          </tbody>
+              {history.slice(0, 10).map((item) => (
+                <tr key={item.id}>
+                  <td>{item.timestamp}</td>
+                  <td>{item.image_name}</td>
+                  <td>
+                    <span style={{
+                      color: (item.prediction === 'Melanoma' || item.prediction === 'Melanoma acral') ? 'var(--danger)' : 'var(--success)',
+                      fontWeight: 600
+                    }}>
+                      {(item.prediction === 'Melanoma' || item.prediction === 'Melanoma acral') ? '🔴' : '🟢'} {item.prediction === 'Melanoma acral' ? 'Melanoma' : item.prediction}
+                    </span>
+                  </td>
+                  <td>{(item.confidence * 100).toFixed(1)}%</td>
+                  <td>
+                    <button onClick={() => handleDeleteHistory(item.id)} style={{ color: 'var(--danger)', background: 'none', border: 'none' }}>
+                      <Trash2 size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {history.length === 0 && (
+                <tr className="empty-history-row">
+                  <td colSpan="5" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+                    No hay análisis previos
+                  </td>
+                </tr>
+              )}
+            </tbody>
           </table>
         </div>
       </div>
