@@ -99,8 +99,10 @@ const Dashboard = () => {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      setFile(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile));
+      const extension = selectedFile.name.split('.').pop();
+      const newFile = new File([selectedFile], `${Date.now()}.${extension}`, { type: selectedFile.type });
+      setFile(newFile);
+      setPreview(URL.createObjectURL(newFile));
       setResult(null);
       setError('');
       setShowCameraOptions(false);
