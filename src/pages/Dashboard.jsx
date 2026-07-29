@@ -261,14 +261,6 @@ const Dashboard = () => {
     setShowUserDropdown(!showUserDropdown);
   };
 
-  const handleMouseEnter = () => {
-    setShowUserDropdown(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShowUserDropdown(false);
-  };
-
   const getStats = () => {
     const melanoma = history.filter(h => h.prediction === 'Melanoma' || h.prediction === 'Melanoma acral').length;
     return {
@@ -350,12 +342,11 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="header-actions" ref={dropdownRef} onMouseLeave={handleMouseLeave}>
+        <div className="header-actions" ref={dropdownRef}>
 
           <div
             className="user-profile"
             onClick={toggleUserDropdown}
-            onMouseEnter={handleMouseEnter}
             style={{ cursor: 'pointer' }}
           >
             <div className="user-avatar" style={{
@@ -382,7 +373,7 @@ const Dashboard = () => {
           </div>
 
           {showUserDropdown && (
-            <div className="user-dropdown" onMouseEnter={handleMouseEnter}>
+            <div className="user-dropdown">
               <div className="dropdown-item" onClick={() => { setShowUserDropdown(false); }}>
                 <User size={16} />
                 <span>Mi perfil</span>
