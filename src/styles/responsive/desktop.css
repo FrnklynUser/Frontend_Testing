@@ -27,4 +27,14 @@
   .history-table-wrapper {
     overflow-x: auto;
   }
+
+  .header-actions {
+    position: relative;
+  }
+
+  .user-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+  }
 }

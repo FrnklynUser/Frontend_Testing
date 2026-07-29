@@ -23,12 +23,15 @@ import {
   ChevronDown,
   ChevronUp,
   AlertCircle,
-  ShieldCheck
+  ShieldCheck,
+  User,
+  X
 } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const fileInputRef = useRef(null);
+  const dropdownRef = useRef(null);
   const toast = useToast();
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -51,6 +54,7 @@ const Dashboard = () => {
   });
   const [canClear, setCanClear] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
 
   const getInitials = (name) => {
     const parts = name.split(' ').filter(p => !['dr.', 'dra.', 'dr', 'dra'].includes(p.toLowerCase()));
@@ -62,6 +66,28 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchHistory();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowUserDropdown(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setShowUserDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
   }, []);
 
   useEffect(() => {
@@ -218,6 +244,33 @@ const Dashboard = () => {
     setTimeLeft(60);
   };
 
+  const handleRemoveFile = () => {
+    setFile(null);
+    setPreview(null);
+    setResult(null);
+    setShowAllFeatures(false);
+    setError('');
+    setClinicalData({ age: '', gender: '', family_history: '', sun_exposure: '' });
+    setShowClinicalForm(false);
+    setCanClear(false);
+    setTimeLeft(60);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const toggleUserDropdown = () => {
+    setShowUserDropdown(!showUserDropdown);
+  };
+
+  const handleMouseEnter = () => {
+    setShowUserDropdown(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowUserDropdown(false);
+  };
+
   const getStats = () => {
     const melanoma = history.filter(h => h.prediction === 'Melanoma' || h.prediction === 'Melanoma acral').length;
     return {
@@ -301,9 +354,14 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="header-actions">
+        <div className="header-actions" ref={dropdownRef} onMouseLeave={handleMouseLeave}>
 
-          <div className="user-profile">
+          <div
+            className="user-profile"
+            onClick={toggleUserDropdown}
+            onMouseEnter={handleMouseEnter}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="user-avatar" style={{
               border: '2px solid white',
               boxShadow: '0 0 0 2px var(--primary-light)'
@@ -311,7 +369,10 @@ const Dashboard = () => {
               {getInitials(user.name)}
             </div>
             <div className="user-details">
-              <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{user.name}</span>
+              <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                {user.name}
+                <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: showUserDropdown ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+              </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span style={{ color: 'var(--primary)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase' }}>
                   Especialista
@@ -324,10 +385,18 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <button onClick={logout} className="logout-btn-red" title="Cerrar Sesión">
-            <LogOut size={18} />
-            <span>Cerrar Sesión</span>
-          </button>
+          {showUserDropdown && (
+            <div className="user-dropdown" onMouseEnter={handleMouseEnter}>
+              <div className="dropdown-item" onClick={() => { setShowUserDropdown(false); }}>
+                <User size={16} />
+                <span>Mi perfil</span>
+              </div>
+              <div className="dropdown-item dropdown-item-danger" onClick={() => { logout(); setShowUserDropdown(false); }}>
+                <LogOut size={16} />
+                <span>Cerrar sesión</span>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
@@ -433,7 +502,14 @@ const Dashboard = () => {
           </div>
 
           {preview && (
-            <div style={{ marginTop: '1.5rem' }}>
+            <div style={{ marginTop: '1.5rem', position: 'relative' }}>
+              <button
+                onClick={handleRemoveFile}
+                className="remove-preview-btn"
+                title="Eliminar imagen"
+              >
+                <X size={16} />
+              </button>
               <img src={preview} alt="Vista previa" className="preview-img" />
 
               {/* Panel de datos clínicos opcionales */}

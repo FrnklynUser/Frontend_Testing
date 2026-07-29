@@ -32,6 +32,14 @@
 
   .header-actions {
     gap: 1rem;
+    position: relative;
+  }
+
+  .user-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    min-width: 170px;
   }
 
   /* Login y Registro */
