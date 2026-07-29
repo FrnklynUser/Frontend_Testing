@@ -221,7 +221,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   border: 1px solid var(--border-color);
   min-width: 180px;
-  z-index: 1000;
+  z-index: 9999;
   animation: dropdownFadeIn 0.2s ease;
   overflow: hidden;
 }
