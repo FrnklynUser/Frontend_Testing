@@ -48,9 +48,7 @@ const Dashboard = () => {
   const [showCameraOptions, setShowCameraOptions] = useState(false);
   const [clinicalData, setClinicalData] = useState({
     age: '',
-    gender: '',
-    family_history: '',
-    sun_exposure: ''
+    gender: ''
   });
   const [canClear, setCanClear] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
@@ -148,7 +146,7 @@ const Dashboard = () => {
       setError('');
       setShowCameraOptions(false);
       // Resetear datos clínicos al cambiar imagen
-      setClinicalData({ age: '', gender: '', family_history: '', sun_exposure: '' });
+      setClinicalData({ age: '', gender: '' });
       setShowClinicalForm(false);
     }
   };
@@ -169,7 +167,7 @@ const Dashboard = () => {
         setError('');
         setShowCameraOptions(false);
         // Resetear datos clínicos al cambiar imagen
-        setClinicalData({ age: '', gender: '', family_history: '', sun_exposure: '' });
+        setClinicalData({ age: '', gender: '' });
         setShowClinicalForm(false);
       }
     };
@@ -180,8 +178,8 @@ const Dashboard = () => {
     if (!file) return;
 
     // Validar que todos los datos clínicos estén completos
-    if (!clinicalData.age || !clinicalData.gender || !clinicalData.family_history || !clinicalData.sun_exposure) {
-      const msg = 'Por favor, complete todos los datos clínicos del paciente (Edad, Sexo, Antecedentes familiares y Exposición solar) antes de analizar la imagen.';
+    if (!clinicalData.age || !clinicalData.gender) {
+      const msg = 'Por favor, complete todos los datos clínicos del paciente (Edad y Sexo) antes de analizar la imagen.';
       setError(msg);
       toast.warning('Por favor complete todos los datos clínicos.');
       setShowClinicalForm(true);
@@ -238,7 +236,7 @@ const Dashboard = () => {
     setResult(null);
     setShowAllFeatures(false);
     setError('');
-    setClinicalData({ age: '', gender: '', family_history: '', sun_exposure: '' });
+    setClinicalData({ age: '', gender: '' });
     setShowClinicalForm(false);
     setCanClear(false);
     setTimeLeft(60);
@@ -250,7 +248,7 @@ const Dashboard = () => {
     setResult(null);
     setShowAllFeatures(false);
     setError('');
-    setClinicalData({ age: '', gender: '', family_history: '', sun_exposure: '' });
+    setClinicalData({ age: '', gender: '' });
     setShowClinicalForm(false);
     setCanClear(false);
     setTimeLeft(60);
@@ -297,8 +295,6 @@ const Dashboard = () => {
     area_ratio: 'Ratio de área',
     age: 'Edad',
     gender: 'Género',
-    family_history: 'Antecedentes familiares',
-    sun_exposure: 'Exposición solar',
     texture_roughness: 'Rugosidad de textura',
     lesion_shape: 'Forma de la lesión',
     color_uniformity: 'Uniformidad de color',
@@ -526,7 +522,7 @@ const Dashboard = () => {
                       <span className={`badge-optional ${Object.values(clinicalData).some(v => v !== '') ? 'badge-filled' : ''
                         }`}>
                         {Object.values(clinicalData).filter(v => v !== '').length > 0
-                          ? `${Object.values(clinicalData).filter(v => v !== '').length}/4 ingresados`
+                          ? `${Object.values(clinicalData).filter(v => v !== '').length}/2 ingresados`
                           : 'Obligatorio'}
                       </span>
                     </div>
@@ -561,36 +557,6 @@ const Dashboard = () => {
                           <option value="">-- Seleccione --</option>
                           <option value="0">Masculino</option>
                           <option value="1">Femenino</option>
-                        </select>
-                      </div>
-
-                      <div className="clinical-field">
-                        <label htmlFor="patient-family">Antecedentes familiares *</label>
-                        <select
-                          id="patient-family"
-                          value={clinicalData.family_history}
-                          onChange={e => setClinicalData(p => ({ ...p, family_history: e.target.value }))}
-                        >
-                          <option value="">-- Seleccione --</option>
-                          <option value="0">Ninguno</option>
-                          <option value="1">Sí, hay antecedentes</option>
-                          <option value="2">Incierto</option>
-                          <option value="3">Múltiples casos</option>
-                        </select>
-                      </div>
-
-                      <div className="clinical-field">
-                        <label htmlFor="patient-sun">Exposición solar crónica *</label>
-                        <select
-                          id="patient-sun"
-                          value={clinicalData.sun_exposure}
-                          onChange={e => setClinicalData(p => ({ ...p, sun_exposure: e.target.value }))}
-                        >
-                          <option value="">-- Seleccione --</option>
-                          <option value="0">Baja</option>
-                          <option value="1">Media</option>
-                          <option value="2">Alta</option>
-                          <option value="3">Muy alta</option>
                         </select>
                       </div>
                     </div>
@@ -842,14 +808,6 @@ const Dashboard = () => {
                             let displayVal = val.toFixed(3);
                             if (key === 'age') displayVal = Math.round(val);
                             if (key === 'gender') displayVal = val === 0 ? 'Masc.' : 'Fem.';
-                            if (key === 'family_history') {
-                              const maps = { 0: 'Ninguno', 1: 'Sí', 2: 'Incierto', 3: 'Múltiples' };
-                              displayVal = maps[Math.round(val)] || val;
-                            }
-                            if (key === 'sun_exposure') {
-                              const maps = { 0: 'Baja', 1: 'Media', 2: 'Alta', 3: 'Muy alta' };
-                              displayVal = maps[Math.round(val)] || val;
-                            }
 
                             return (
                               <div key={key} className="feature-tag" style={{ background: '#fcfcfc', borderStyle: 'dotted' }}>

@@ -21,7 +21,7 @@
   }
 
   .clinical-body {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .history-table-wrapper {
