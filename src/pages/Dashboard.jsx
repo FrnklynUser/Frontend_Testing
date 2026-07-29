@@ -324,7 +324,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <button onClick={logout} className="logout-btn" title="Cerrar Sesión">
+          <button onClick={logout} className="logout-btn-red" title="Cerrar Sesión">
             <LogOut size={18} />
             <span>Cerrar Sesión</span>
           </button>
