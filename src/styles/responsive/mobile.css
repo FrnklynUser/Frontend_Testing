@@ -38,6 +38,11 @@
     gap: 0.5rem;
   }
 
+  .header-brand svg {
+    width: 28px;
+    height: 28px;
+  }
+
   .header-brand h1 {
     font-size: 1.05rem;
     font-weight: 800;
@@ -116,6 +121,12 @@
     gap: 0.75rem;
   }
 
+  .info-bar svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
   .info-bar p {
     font-size: 0.8rem;
     line-height: 1.4;
@@ -161,8 +172,8 @@
   }
 
   .upload-area > div > button svg {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
   }
 
   .preview-img {
