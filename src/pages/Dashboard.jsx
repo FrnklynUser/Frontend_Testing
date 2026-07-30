@@ -43,7 +43,6 @@ const Dashboard = () => {
   const [historyLimit, setHistoryLimit] = useState(5);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-  const [showClinicalForm, setShowClinicalForm] = useState(false);
   const [validationErrorData, setValidationErrorData] = useState(null);
   const [showCameraOptions, setShowCameraOptions] = useState(false);
   const [clinicalData, setClinicalData] = useState({
@@ -148,7 +147,6 @@ const Dashboard = () => {
       setShowCameraOptions(false);
       // Resetear datos clínicos al cambiar imagen
       setClinicalData({ age: '', gender: '' });
-      setShowClinicalForm(true);
     }
   };
 
@@ -169,7 +167,6 @@ const Dashboard = () => {
         setShowCameraOptions(false);
         // Resetear datos clínicos al cambiar imagen
         setClinicalData({ age: '', gender: '' });
-        setShowClinicalForm(true);
       }
     };
     input.click();
@@ -182,8 +179,6 @@ const Dashboard = () => {
     if (!clinicalData.age || !clinicalData.gender) {
       const msg = 'Por favor, complete todos los datos clínicos del paciente (Edad y Sexo) antes de analizar la imagen.';
       setError(msg);
-      toast.warning('Por favor complete todos los datos clínicos.');
-      setShowClinicalForm(true);
       return;
     }
 
@@ -197,17 +192,31 @@ const Dashboard = () => {
       setShowAllFeatures(false); // Resetear estado de expansión
       fetchHistory();
     } catch (err) {
-      // Manejo especial para imagen no dermatoscópica (HTTP 422)
       const detail = err.response?.data?.detail;
-      let msg = '';
-      if (err.response?.status === 422 && detail?.error === 'imagen_no_dermatoscopica') {
-        setValidationErrorData(detail);
-        msg = detail.message;
-      } else {
-        msg = detail?.message || detail || 'Error al procesar la imagen.';
+      const statusCode = err.response?.status;
+
+      // Error 500 o errores de red/servidor → Solo Toast (estado del sistema)
+      if (statusCode === 500 || !err.response) {
+        toast.error('Interrupción del servicio: Tiempo de espera agotado al conectar con el servidor.');
+        setError(''); // No mostrar alerta estática
       }
-      setError(msg);
-      toast.error('Error al analizar la lesión.');
+      // Error 422 (imagen no dermatoscópica) → Solo Alerta estática (accionable)
+      else if (statusCode === 422 && detail?.error === 'imagen_no_dermatoscopica') {
+        setValidationErrorData(detail);
+        setError(detail.message);
+        // No mostrar toast
+      }
+      // Error 400 u otros errores de validación → Solo Alerta estática (accionable)
+      else if (statusCode === 400 || statusCode === 422) {
+        const msg = detail?.message || detail || 'No fue posible analizar la imagen. Por favor, verifique que la captura tenga buena iluminación y vuelva a intentarlo.';
+        setError(msg);
+        // No mostrar toast
+      }
+      // Otros errores → Toast genérico
+      else {
+        toast.error('Error de conexión: No se pudo establecer comunicación con el motor de análisis.');
+        setError('');
+      }
     } finally {
       setLoading(false);
     }
@@ -225,8 +234,9 @@ const Dashboard = () => {
       fetchHistory();
       setShowDeleteModal(false);
       setItemToDelete(null);
+      toast.success('Registro eliminado correctamente.');
     } catch (err) {
-      setError("Error al eliminar el registro");
+      toast.error('Error de conexión: No se pudo eliminar el registro del historial.');
       setShowDeleteModal(false);
     }
   };
@@ -238,7 +248,6 @@ const Dashboard = () => {
     setShowAllFeatures(false);
     setError('');
     setClinicalData({ age: '', gender: '' });
-    setShowClinicalForm(false);
     setCanClear(false);
     setTimeLeft(60);
   };
@@ -250,7 +259,6 @@ const Dashboard = () => {
     setShowAllFeatures(false);
     setError('');
     setClinicalData({ age: '', gender: '' });
-    setShowClinicalForm(false);
     setCanClear(false);
     setTimeLeft(60);
     if (fileInputRef.current) {
@@ -499,14 +507,10 @@ const Dashboard = () => {
               </button>
               <img src={preview} alt="Vista previa" className="preview-img" />
 
-              {/* Panel de datos clínicos opcionales */}
+              {/* Panel de datos clínicos */}
               {!result && (
                 <div className="clinical-panel">
-                  <div
-                    className={`clinical-header ${showClinicalForm ? 'open' : ''}`}
-                    onClick={() => setShowClinicalForm(v => !v)}
-                    id="clinical-data-toggle"
-                  >
+                  <div className="clinical-header-static">
                     <div className="clinical-header-left">
                       <span>🩺</span>
                       <span>Datos Clínicos del Paciente</span>
@@ -517,47 +521,44 @@ const Dashboard = () => {
                           : 'Obligatorio'}
                       </span>
                     </div>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', transition: 'transform 0.2s', display: 'inline-block', transform: showClinicalForm ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
                   </div>
 
-                  {showClinicalForm && (
-                    <div className="clinical-body">
-                      <div className="clinical-field">
-                        <label htmlFor="patient-age">Edad *</label>
-                        <div className="age-input-wrapper">
-                          <input
-                            id="patient-age"
-                            type="number"
-                            min="10" max="80"
-                            placeholder="Ej. 45"
-                            value={clinicalData.age}
-                            onChange={e => setClinicalData(p => ({ ...p, age: e.target.value }))}
-                          />
-                          <span className="age-suffix">años</span>
-                        </div>
-                      </div>
-
-                      <div className="clinical-field">
-                        <label>Sexo biológico *</label>
-                        <div className="gender-segmented-control">
-                          <button
-                            type="button"
-                            onClick={() => setClinicalData(p => ({ ...p, gender: '0' }))}
-                            className={`gender-option ${clinicalData.gender === '0' ? 'gender-option-active' : ''}`}
-                          >
-                            Masculino
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setClinicalData(p => ({ ...p, gender: '1' }))}
-                            className={`gender-option ${clinicalData.gender === '1' ? 'gender-option-active' : ''}`}
-                          >
-                            Femenino
-                          </button>
-                        </div>
+                  <div className="clinical-body">
+                    <div className="clinical-field">
+                      <label htmlFor="patient-age">Edad *</label>
+                      <div className="age-input-wrapper">
+                        <input
+                          id="patient-age"
+                          type="number"
+                          min="10" max="80"
+                          placeholder="Ej. 45"
+                          value={clinicalData.age}
+                          onChange={e => setClinicalData(p => ({ ...p, age: e.target.value }))}
+                        />
+                        <span className="age-suffix">años</span>
                       </div>
                     </div>
-                  )}
+
+                    <div className="clinical-field">
+                      <label>Sexo biológico *</label>
+                      <div className="gender-segmented-control">
+                        <button
+                          type="button"
+                          onClick={() => setClinicalData(p => ({ ...p, gender: '0' }))}
+                          className={`gender-option ${clinicalData.gender === '0' ? 'gender-option-active' : ''}`}
+                        >
+                          Masculino
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setClinicalData(p => ({ ...p, gender: '1' }))}
+                          className={`gender-option ${clinicalData.gender === '1' ? 'gender-option-active' : ''}`}
+                        >
+                          Femenino
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -640,7 +641,7 @@ const Dashboard = () => {
               <div className="result-card" style={{ borderColor: 'var(--danger)', backgroundColor: 'var(--danger-bg)' }}>
                 <div style={{ color: 'var(--danger)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.05rem' }}>
                   <XCircle size={22} />
-                  {validationErrorData ? 'Imagen; Rechazada' : (error.includes(';') ? error.split('\n')[0] : 'Error en el Procesamiento')}
+                  {validationErrorData ? 'Evaluación Detenida' : 'Análisis Incompleto'}
                 </div>
                 <div style={{ fontSize: '0.9rem', marginTop: '0.75rem', color: '#4b5563', lineHeight: 1.5 }}>
                   {(() => {

@@ -211,6 +211,10 @@
     margin-top: 1.25rem;
   }
 
+  .clinical-header-static {
+    padding: 0.85rem 1rem;
+  }
+
   .clinical-header {
     padding: 0.85rem 1rem;
   }
