@@ -697,7 +697,7 @@ const Dashboard = () => {
 
           {!result && !loading && (
             <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
-              <ImageIcon size={64} color="#f1f5f9" style={{ marginBottom: '1rem' }} />
+              <ImageIcon size={64} color="#f1f5f9" style={{ marginBottom: '0.85rem' }} />
               <p>Sube una imagen para comenzar el análisis</p>
             </div>
           )}
@@ -959,11 +959,19 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div style={{ padding: '1rem', background: '#fef3c7', borderRadius: '8px', marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#92400e' }}>
-                <ShieldCheck size={16} />
-                <span>La edición de perfil estará disponible en futuras actualizaciones</span>
+            <div style={{ padding: '1rem', background: '#f1f5f9', borderRadius: '8px', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  <ShieldCheck size={16} />
+                  <span>Desarrollado por Ramos Ortiz Jhon Franklin, Bachiller en Ingeniería de Sistemas de la Universidad Señor de Sipán</span>
+                </div>
               </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', background: '#e2e8f0', padding: '0.25rem 0.75rem', borderRadius: '4px', fontFamily: 'monospace' }}>
+                PDA V1.0
+              </span>
             </div>
 
             <div className="modal-actions">
