@@ -53,6 +53,7 @@ const Dashboard = () => {
   const [canClear, setCanClear] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   const getInitials = (name) => {
     const parts = name.split(' ').filter(p => !['dr.', 'dra.', 'dr', 'dra'].includes(p.toLowerCase()));
@@ -335,7 +336,7 @@ const Dashboard = () => {
                 </p>
                 <div className="header-status">
                   <div className="status-dot"></div>
-                  SERVIDOR ACTIVO
+                  CONECTADO
                 </div>
               </div>
             </div>
@@ -374,9 +375,9 @@ const Dashboard = () => {
 
           {showUserDropdown && (
             <div className="user-dropdown">
-              <div className="dropdown-item" onClick={() => { setShowUserDropdown(false); }}>
-                <User size={16} />
-                <span>Mi perfil</span>
+              <div className="dropdown-item" onClick={() => { setShowUserDropdown(false); setShowProfileModal(true); }}>
+                <Settings size={16} />
+                <span>Ajustes de Perfil</span>
               </div>
               <div className="dropdown-item dropdown-item-danger" onClick={() => { logout(); setShowUserDropdown(false); }}>
                 <LogOut size={16} />
@@ -920,6 +921,57 @@ const Dashboard = () => {
                 onClick={confirmDelete}
               >
                 Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showProfileModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div className="user-avatar" style={{
+                width: '64px',
+                height: '64px',
+                fontSize: '1.5rem',
+                border: '3px solid white',
+                boxShadow: '0 0 0 3px var(--primary-light)'
+              }}>
+                {getInitials(user.name)}
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{user.name}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>@{user.username}</p>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Rol</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--primary)' }}>Especialista</div>
+                </div>
+                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Análisis realizados</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>{history.length}</div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ padding: '1rem', background: '#fef3c7', borderRadius: '8px', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#92400e' }}>
+                <ShieldCheck size={16} />
+                <span>La edición de perfil estará disponible en futuras actualizaciones</span>
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="cancel-btn"
+                onClick={() => setShowProfileModal(false)}
+              >
+                Cerrar
               </button>
             </div>
           </div>
