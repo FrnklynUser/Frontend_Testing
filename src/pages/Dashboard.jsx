@@ -328,7 +328,7 @@ const Dashboard = () => {
             </div>
             <div>
               <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                Plataforma de Detección Acral <span className="badge-system">PDA V1.0</span>
+                Plataforma de Detección Acral
               </h1>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.2rem' }}>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>
@@ -377,7 +377,7 @@ const Dashboard = () => {
             <div className="user-dropdown">
               <div className="dropdown-item" onClick={() => { setShowUserDropdown(false); setShowProfileModal(true); }}>
                 <Settings size={16} />
-                <span>Ajustes de Perfil</span>
+                <span>Acerca de</span>
               </div>
               <div className="dropdown-item dropdown-item-danger" onClick={() => { logout(); setShowUserDropdown(false); }}>
                 <LogOut size={16} />
@@ -522,10 +522,6 @@ const Dashboard = () => {
 
                   {showClinicalForm && (
                     <div className="clinical-body">
-                      <p className="clinical-hint">
-                        Proporcione datos clínicos del paciente. Todos los campos son obligatorios para el análisis.
-                      </p>
-
                       <div className="clinical-field">
                         <label htmlFor="patient-age">Edad *</label>
                         <input
@@ -545,7 +541,7 @@ const Dashboard = () => {
                           value={clinicalData.gender}
                           onChange={e => setClinicalData(p => ({ ...p, gender: e.target.value }))}
                         >
-                          <option value="">-- Seleccione --</option>
+                          <option value="">Seleccionar opción</option>
                           <option value="0">Masculino</option>
                           <option value="1">Femenino</option>
                         </select>
@@ -929,47 +925,54 @@ const Dashboard = () => {
 
       {showProfileModal && (
         <div className="modal-overlay">
-          <div className="modal-content">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div className="modal-content" style={{ maxWidth: '500px' }}>
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', textAlign: 'center' }}>Acerca de</h3>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', padding: '1rem', background: '#f8fafc', borderRadius: '12px' }}>
               <div className="user-avatar" style={{
-                width: '64px',
-                height: '64px',
-                fontSize: '1.5rem',
+                width: '56px',
+                height: '56px',
+                fontSize: '1.3rem',
                 border: '3px solid white',
                 boxShadow: '0 0 0 3px var(--primary-light)'
               }}>
                 {getInitials(user.name)}
               </div>
               <div>
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{user.name}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>@{user.username}</p>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', margin: 0 }}>{user.name}</h4>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>@{user.username}</p>
               </div>
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
+                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', textAlign: 'center' }}>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Rol</div>
                   <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--primary)' }}>Especialista</div>
                 </div>
-                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
+                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', textAlign: 'center' }}>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Análisis realizados</div>
                   <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>{history.length}</div>
                 </div>
               </div>
             </div>
 
-            <div style={{ padding: '1rem', background: '#f1f5f9', borderRadius: '8px', marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <ShieldCheck size={16} />
-                  <span>Desarrollado por Ramos Ortiz Jhon Franklin, Bachiller en Ingeniería de Sistemas de la Universidad Señor de Sipán</span>
+            <div style={{ padding: '1.25rem', background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid #bae6fd' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <ShieldCheck size={20} style={{ color: '#0284c7', flexShrink: 0, marginTop: '0.1rem' }} />
+                <div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#0369a1', marginBottom: '0.5rem' }}>Desarrollador</div>
+                  <div style={{ fontSize: '0.85rem', color: '#0c4a6e', lineHeight: '1.6' }}>
+                    Ramos Ortiz Jhon Franklin<br />
+                    Bachiller en Ingeniería de Sistemas<br />
+                    Universidad Señor de Sipán
+                  </div>
                 </div>
               </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-              <span style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', background: '#e2e8f0', padding: '0.25rem 0.75rem', borderRadius: '4px', fontFamily: 'monospace' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', background: '#e2e8f0', padding: '0.35rem 1rem', borderRadius: '6px', fontFamily: 'monospace' }}>
                 PDA V1.0
               </span>
             </div>

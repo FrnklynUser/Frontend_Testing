@@ -199,7 +199,7 @@
   }
 
   .preview-img {
-    max-height: 450px;
+    max-height: 600px;
     width: 100%;
     object-fit: contain;
     border-radius: 10px;
