@@ -527,8 +527,8 @@ const Dashboard = () => {
                         <input
                           id="patient-age"
                           type="number"
-                          min="1" max="110"
-                          placeholder="ej: 55"
+                          min="10" max="80"
+                          placeholder="ejemplo: 55"
                           value={clinicalData.age}
                           onChange={e => setClinicalData(p => ({ ...p, age: e.target.value }))}
                         />
@@ -541,7 +541,7 @@ const Dashboard = () => {
                           value={clinicalData.gender}
                           onChange={e => setClinicalData(p => ({ ...p, gender: e.target.value }))}
                         >
-                          <option value="">Seleccionar opción</option>
+                          <option value="">Elegir una opción</option>
                           <option value="0">Masculino</option>
                           <option value="1">Femenino</option>
                         </select>
