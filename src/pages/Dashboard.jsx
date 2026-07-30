@@ -148,7 +148,7 @@ const Dashboard = () => {
       setShowCameraOptions(false);
       // Resetear datos clínicos al cambiar imagen
       setClinicalData({ age: '', gender: '' });
-      setShowClinicalForm(false);
+      setShowClinicalForm(true);
     }
   };
 
@@ -169,7 +169,7 @@ const Dashboard = () => {
         setShowCameraOptions(false);
         // Resetear datos clínicos al cambiar imagen
         setClinicalData({ age: '', gender: '' });
-        setShowClinicalForm(false);
+        setShowClinicalForm(true);
       }
     };
     input.click();
