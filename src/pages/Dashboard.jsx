@@ -401,7 +401,7 @@ const Dashboard = () => {
         <div>
           <div style={{ fontWeight: 600 }}>Sistema de Análisis Dermatoscópico</div>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-            Cargue la imagen dermatoscópica del paciente, ya sea desde sus archivos locales o captura directa. Para iniciar la evaluación diagnóstica, por favor complete previamente los datos clínicos requeridos.
+            Cargue la imagen de la lesión del paciente, ya sea desde sus archivos locales o captura directa. Para iniciar la evaluación diagnóstica, por favor complete previamente los datos clínicos requeridos.
           </p>
         </div>
       </div>
