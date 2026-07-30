@@ -239,6 +239,25 @@
     border-radius: 8px;
   }
 
+  .age-input-wrapper input {
+    height: 44px;
+    font-size: 0.9rem;
+  }
+
+  .age-suffix {
+    font-size: 0.9rem;
+  }
+
+  .gender-segmented-control {
+    padding: 0.35rem;
+  }
+
+  .gender-option {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.9rem;
+    height: 44px;
+  }
+
   .clinical-hint {
     font-size: 0.75rem;
     padding: 0.5rem;

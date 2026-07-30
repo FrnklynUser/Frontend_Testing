@@ -524,27 +524,37 @@ const Dashboard = () => {
                     <div className="clinical-body">
                       <div className="clinical-field">
                         <label htmlFor="patient-age">Edad *</label>
-                        <input
-                          id="patient-age"
-                          type="number"
-                          min="10" max="80"
-                          placeholder="ejemplo: 55"
-                          value={clinicalData.age}
-                          onChange={e => setClinicalData(p => ({ ...p, age: e.target.value }))}
-                        />
+                        <div className="age-input-wrapper">
+                          <input
+                            id="patient-age"
+                            type="number"
+                            min="10" max="80"
+                            placeholder="Ej. 45"
+                            value={clinicalData.age}
+                            onChange={e => setClinicalData(p => ({ ...p, age: e.target.value }))}
+                          />
+                          <span className="age-suffix">años</span>
+                        </div>
                       </div>
 
                       <div className="clinical-field">
-                        <label htmlFor="patient-gender">Sexo biológico *</label>
-                        <select
-                          id="patient-gender"
-                          value={clinicalData.gender}
-                          onChange={e => setClinicalData(p => ({ ...p, gender: e.target.value }))}
-                        >
-                          <option value="">Elegir una opción</option>
-                          <option value="0">Masculino</option>
-                          <option value="1">Femenino</option>
-                        </select>
+                        <label>Sexo biológico *</label>
+                        <div className="gender-segmented-control">
+                          <button
+                            type="button"
+                            onClick={() => setClinicalData(p => ({ ...p, gender: '0' }))}
+                            className={`gender-option ${clinicalData.gender === '0' ? 'gender-option-active' : ''}`}
+                          >
+                            Masculino
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setClinicalData(p => ({ ...p, gender: '1' }))}
+                            className={`gender-option ${clinicalData.gender === '1' ? 'gender-option-active' : ''}`}
+                          >
+                            Femenino
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
