@@ -331,7 +331,7 @@ const Dashboard = () => {
               </h1>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.2rem' }}>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>
-                  Sistema de Diagnóstico Asistido por IA
+                  Herramienta de Evaluación Asistida
                 </p>
                 <div className="header-status">
                   <div className="status-dot"></div>
@@ -392,8 +392,7 @@ const Dashboard = () => {
         <div>
           <div style={{ fontWeight: 600 }}>Sistema de Análisis Dermatoscópico</div>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-            Se aceptan imágenes dermatoscópicas del dataset y también imágenes externas descargadas de internet.
-            Debe ingresar los datos clínicos obligatorios del paciente para realizar el análisis de diagnóstico.
+            Cargue la imagen dermatoscópica del paciente, ya sea desde sus archivos locales o captura directa. Para iniciar la evaluación diagnóstica, por favor complete previamente los datos clínicos requeridos.
           </p>
         </div>
       </div>
