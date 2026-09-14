@@ -957,7 +957,7 @@ const Dashboard = () => {
                   onChange={e => setClinicalData(p => ({ ...p, gender: e.target.value }))}
                   style={{ width: '100%', padding: '0.55rem 0.75rem', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '0.88rem', background: 'white', boxSizing: 'border-box' }}
                 >
-                  <option value="">Seleccionar -</option>
+                  <option value="">Seleccionar ▼</option>
                   <option value="0">Masculino</option>
                   <option value="1">Femenino</option>
                 </select>
