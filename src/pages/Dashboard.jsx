@@ -965,17 +965,17 @@ const Dashboard = () => {
                       background: 'white',
                       boxSizing: 'border-box',
                       appearance: 'none',
-                      color: clinicalData.gender ? 'var(--text-primary)' : '#9ca3af',
+                      color: clinicalData.gender ? 'var(--text-primary)' : 'var(--text-secondary)',
                       cursor: 'pointer'
                     }}
                   >
-                    <option value="" style={{ color: '#9ca3af' }}>Seleccionar</option>
+                    <option value="" style={{ color: 'var(--text-secondary)' }}>Seleccionar</option>
                     <option value="0" style={{ color: 'var(--text-primary)' }}>Masculino</option>
                     <option value="1" style={{ color: 'var(--text-primary)' }}>Femenino</option>
                   </select>
                   <ChevronDown
                     size={16}
-                    color="#9ca3af"
+                    color="var(--text-secondary)"
                     style={{
                       position: 'absolute',
                       right: '10px',
