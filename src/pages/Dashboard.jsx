@@ -952,15 +952,39 @@ const Dashboard = () => {
 
               <div className="clinical-field">
                 <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>Sexo Biológico</label>
-                <select
-                  value={clinicalData.gender}
-                  onChange={e => setClinicalData(p => ({ ...p, gender: e.target.value }))}
-                  style={{ width: '100%', padding: '0.55rem 0.75rem', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '0.88rem', background: 'white', boxSizing: 'border-box' }}
-                >
-                  <option value="">Seleccionar ▼</option>
-                  <option value="0">Masculino</option>
-                  <option value="1">Femenino</option>
-                </select>
+                <div style={{ position: 'relative' }}>
+                  <select
+                    value={clinicalData.gender}
+                    onChange={e => setClinicalData(p => ({ ...p, gender: e.target.value }))}
+                    style={{
+                      width: '100%',
+                      padding: '0.55rem 2rem 0.55rem 0.75rem',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      fontSize: '0.88rem',
+                      background: 'white',
+                      boxSizing: 'border-box',
+                      appearance: 'none',
+                      color: clinicalData.gender ? 'var(--text-primary)' : '#9ca3af',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="" style={{ color: '#9ca3af' }}>Seleccionar</option>
+                    <option value="0" style={{ color: 'var(--text-primary)' }}>Masculino</option>
+                    <option value="1" style={{ color: 'var(--text-primary)' }}>Femenino</option>
+                  </select>
+                  <ChevronDown
+                    size={16}
+                    color="#9ca3af"
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      pointerEvents: 'none'
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
