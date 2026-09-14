@@ -25,11 +25,13 @@ import {
   ShieldCheck,
   Stethoscope,
   X,
-  Sparkles
+  Sparkles,
+  Edit2,
+  Check
 } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, login, logout } = useAuth();
   const fileInputRef = useRef(null);
   const dropdownRef = useRef(null);
   const toast = useToast();
@@ -53,6 +55,8 @@ const Dashboard = () => {
   });
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState('');
 
   const getUserDisplayName = (currentUser) => {
     if (!currentUser) return 'Dr. Especialista';
@@ -261,6 +265,25 @@ const Dashboard = () => {
 
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
+  };
+
+  const handleSaveName = () => {
+    if (!editedName.trim()) return;
+    const newName = editedName.trim();
+    const updatedUser = { ...user, name: newName, fullName: newName };
+    login(updatedUser);
+    try {
+      const localUsers = JSON.parse(localStorage.getItem('pda_registered_users') || '[]');
+      const updatedUsers = localUsers.map(u => {
+        if (u.username?.toLowerCase() === user?.username?.toLowerCase()) {
+          return { ...u, name: newName, fullName: newName };
+        }
+        return u;
+      });
+      localStorage.setItem('pda_registered_users', JSON.stringify(updatedUsers));
+    } catch (e) {}
+    setIsEditingName(false);
+    if (toast?.success) toast.success('Nombre del especialista actualizado correctamente.');
   };
 
   const getStats = () => {
@@ -1294,13 +1317,14 @@ const Dashboard = () => {
                 height: '50px',
                 fontSize: '1.2rem',
                 border: '3px solid white',
-                boxShadow: '0 0 0 3px var(--primary-light)'
+                boxShadow: '0 0 0 3px var(--primary-light)',
+                flexShrink: 0
               }}>
                 {getInitials(displayName)}
               </div>
               <div>
-                <h4 style={{ fontSize: '1.05rem', margin: 0 }}>{displayName}</h4>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>@{user?.username || 'usuario'}</p>
+                <h4 style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-primary)' }}>{displayName}</h4>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', margin: '0.15rem 0 0' }}>@{user?.username || 'usuario'}</p>
               </div>
             </div>
 
