@@ -54,11 +54,32 @@ const Dashboard = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
+  const getUserDisplayName = (currentUser) => {
+    if (!currentUser) return 'Dr. Especialista';
+    try {
+      const localUsers = JSON.parse(localStorage.getItem('pda_registered_users') || '[]');
+      const found = localUsers.find(u => u.username?.toLowerCase() === currentUser.username?.toLowerCase());
+      if (found) {
+        if (found.fullName && found.fullName.trim() !== '') return found.fullName;
+        if (found.firstName && found.lastName) return `${found.firstName} ${found.lastName}`.trim();
+        if (found.name && found.name !== found.username) return found.name;
+      }
+    } catch (e) {}
+    if (currentUser.fullName) return currentUser.fullName;
+    if (currentUser.firstName && currentUser.lastName) return `${currentUser.firstName} ${currentUser.lastName}`.trim();
+    if (currentUser.name && currentUser.name !== currentUser.username) return currentUser.name;
+    return currentUser.username || 'Dr. Especialista';
+  };
+
   const getInitials = (name) => {
     if (!name) return 'U';
-    const parts = name.split(' ').filter(p => !['dr.', 'dra.', 'dr', 'dra'].includes(p.toLowerCase()));
+    const clean = name.replace(/^(dr\.|dra\.|dr|dra|lic\.|ing\.)\s+/i, '').trim();
+    const parts = clean.split(/\s+/).filter(Boolean);
     if (parts.length >= 2) {
-      return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+      return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+    }
+    if (parts.length === 1 && parts[0].length >= 2) {
+      return parts[0].substring(0, 2).toUpperCase();
     }
     return name.charAt(0).toUpperCase();
   };
@@ -256,6 +277,7 @@ const Dashboard = () => {
   };
 
   const stats = getStats();
+  const displayName = getUserDisplayName(user);
   const isMelanoma = result?.clase === 1 || result?.diagnostico?.toLowerCase().includes('melanoma');
 
   return (
@@ -267,6 +289,8 @@ const Dashboard = () => {
           padding: 2rem 1.5rem;
         }
         .app-header {
+          position: relative;
+          z-index: 100;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -335,6 +359,7 @@ const Dashboard = () => {
           align-items: center;
           gap: 1.5rem;
           position: relative;
+          z-index: 110;
         }
         .user-profile {
           display: flex;
@@ -363,14 +388,14 @@ const Dashboard = () => {
         .user-dropdown {
           position: absolute;
           right: 0;
-          top: 110%;
+          top: calc(100% + 8px);
           background: white;
-          border-radius: 10px;
-          box-shadow: var(--shadow-lg);
+          border-radius: 12px;
+          box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18), 0 4px 10px rgba(15, 23, 42, 0.08);
           border: 1px solid var(--border-color);
-          padding: 0.4rem;
-          z-index: 100;
-          min-width: 160px;
+          padding: 0.5rem;
+          z-index: 9999;
+          min-width: 190px;
         }
         .dropdown-item {
           display: flex;
@@ -705,17 +730,17 @@ const Dashboard = () => {
           <div
             className="user-profile"
             onClick={toggleUserDropdown}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', padding: '0.35rem 0.6rem', borderRadius: '10px', transition: 'background 0.2s', background: showUserDropdown ? '#f1f5f9' : 'transparent' }}
           >
             <div className="user-avatar" style={{
               border: '2px solid white',
               boxShadow: '0 0 0 2px var(--primary-light)'
             }}>
-              {getInitials(user?.name)}
+              {getInitials(displayName)}
             </div>
             <div className="user-details">
               <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                {user?.name || 'Dr. Especialista'}
+                {displayName}
                 <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: showUserDropdown ? 'rotate(180deg)' : 'rotate(0deg)' }} />
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -734,22 +759,31 @@ const Dashboard = () => {
             <div className="user-dropdown" style={{
               position: 'absolute',
               right: 0,
-              top: '100%',
+              top: '110%',
               marginTop: '0.5rem',
               background: 'white',
-              borderRadius: '8px',
-              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+              borderRadius: '12px',
+              boxShadow: '0 12px 28px rgba(15, 23, 42, 0.15)',
               border: '1px solid var(--border-color)',
               padding: '0.5rem',
-              zIndex: 100,
-              minWidth: '160px'
+              zIndex: 1000,
+              minWidth: '180px'
             }}>
-              <div className="dropdown-item" onClick={() => { setShowUserDropdown(false); setShowProfileModal(true); }} style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', cursor: 'pointer' }}>
-                <Settings size={16} />
+              <div
+                className="dropdown-item"
+                onClick={() => { setShowUserDropdown(false); setShowProfileModal(true); }}
+                style={{ padding: '0.65rem 0.85rem', display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)', borderRadius: '8px', cursor: 'pointer', transition: 'background 0.15s' }}
+              >
+                <Settings size={17} color="var(--primary)" />
                 <span>Acerca de</span>
               </div>
-              <div className="dropdown-item dropdown-item-danger" onClick={() => { logout(); setShowUserDropdown(false); }} style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--danger)', cursor: 'pointer' }}>
-                <LogOut size={16} />
+              <div style={{ height: '1px', background: 'var(--border-color)', margin: '0.35rem 0' }}></div>
+              <div
+                className="dropdown-item dropdown-item-danger"
+                onClick={() => { logout(); setShowUserDropdown(false); }}
+                style={{ padding: '0.65rem 0.85rem', display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.88rem', fontWeight: 700, color: 'var(--danger)', borderRadius: '8px', cursor: 'pointer', transition: 'background 0.15s', background: '#fff5f5' }}
+              >
+                <LogOut size={17} color="var(--danger)" />
                 <span>Cerrar sesión</span>
               </div>
             </div>
@@ -1262,10 +1296,10 @@ const Dashboard = () => {
                 border: '3px solid white',
                 boxShadow: '0 0 0 3px var(--primary-light)'
               }}>
-                {getInitials(user?.name)}
+                {getInitials(displayName)}
               </div>
               <div>
-                <h4 style={{ fontSize: '1.05rem', margin: 0 }}>{user?.name || 'Dr. Especialista'}</h4>
+                <h4 style={{ fontSize: '1.05rem', margin: 0 }}>{displayName}</h4>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>@{user?.username || 'usuario'}</p>
               </div>
             </div>
@@ -1286,7 +1320,7 @@ const Dashboard = () => {
 
             <button
               onClick={() => setShowProfileModal(false)}
-              style={{ width: '100%', padding: '0.75rem', background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+              style={{ width: '100%', padding: '0.75rem', background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', marginTop: '0.5rem' }}
             >
               Cerrar
             </button>

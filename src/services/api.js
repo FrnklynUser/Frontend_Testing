@@ -38,16 +38,30 @@ export const authService = {
   login: async (username, password) => {
     try {
       const response = await api.post('/auth/login', { username, password });
-      return response.data;
+      const userData = response.data.user || response.data;
+      // Enriquecer con nombre completo si está guardado localmente
+      const localUsers = JSON.parse(localStorage.getItem('pda_registered_users') || '[]');
+      const found = localUsers.find(u => u.username?.toLowerCase() === username.toLowerCase());
+      if (found) {
+        userData.name = found.fullName || found.name || `${found.firstName || ''} ${found.lastName || ''}`.trim();
+        userData.fullName = userData.name;
+        userData.firstName = found.firstName;
+        userData.lastName = found.lastName;
+      }
+      return { user: userData };
     } catch (err) {
       // Fallback a almacenamiento local si el backend no cuenta con módulo de usuarios
       const localUsers = JSON.parse(localStorage.getItem('pda_registered_users') || '[]');
-      const found = localUsers.find(u => u.username === username && u.password === password);
+      const found = localUsers.find(u => u.username?.toLowerCase() === username.toLowerCase() && u.password === password);
       if (found) {
+        const fullName = found.fullName || found.name || `${found.firstName || ''} ${found.lastName || ''}`.trim() || found.username;
         return {
           user: {
             username: found.username,
-            name: found.name || found.username
+            name: fullName,
+            fullName: fullName,
+            firstName: found.firstName,
+            lastName: found.lastName
           }
         };
       }
@@ -75,21 +89,40 @@ export const authService = {
       throw new Error('Credenciales incorrectas.');
     }
   },
-  register: async (username, password, name) => {
+  register: async (username, password, name, extraData = {}) => {
     try {
-      const response = await api.post('/auth/register', { username, password, name });
+      const response = await api.post('/auth/register', { username, password, name, ...extraData });
+      const localUsers = JSON.parse(localStorage.getItem('pda_registered_users') || '[]');
+      const filtered = localUsers.filter(u => u.username?.toLowerCase() !== username.toLowerCase());
+      const userObj = {
+        username,
+        password,
+        name,
+        fullName: name,
+        firstName: extraData.firstName || name.split(' ')[0] || '',
+        lastName: extraData.lastName || name.split(' ').slice(1).join(' ') || ''
+      };
+      filtered.push(userObj);
+      localStorage.setItem('pda_registered_users', JSON.stringify(filtered));
       return response.data;
     } catch (err) {
       const localUsers = JSON.parse(localStorage.getItem('pda_registered_users') || '[]');
-      if (localUsers.some(u => u.username === username)) {
+      if (localUsers.some(u => u.username?.toLowerCase() === username.toLowerCase())) {
         throw new Error('El nombre de usuario ya está registrado.');
       }
-      const newUser = { username, password, name };
-      localUsers.push(newUser);
+      const userObj = {
+        username,
+        password,
+        name,
+        fullName: name,
+        firstName: extraData.firstName || name.split(' ')[0] || '',
+        lastName: extraData.lastName || name.split(' ').slice(1).join(' ') || ''
+      };
+      localUsers.push(userObj);
       localStorage.setItem('pda_registered_users', JSON.stringify(localUsers));
       return {
         message: 'Usuario registrado exitosamente',
-        user: { username, name }
+        user: userObj
       };
     }
   },

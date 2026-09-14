@@ -117,7 +117,10 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       const fullName = `${name.trim()} ${lastName.trim()}`;
-      const data = await authService.register(username, password, fullName);
+      const data = await authService.register(username, password, fullName, {
+        firstName: name.trim(),
+        lastName: lastName.trim()
+      });
       const successMsg = data.message + '. Redirigiendo al login...';
       setSuccess(successMsg);
       toast.success(data.message || 'Cuenta creada exitosamente.');
@@ -177,13 +180,13 @@ const RegisterPage = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="input-group">
-              <label>Nombre Completo</label>
+              <label>Nombres</label>
               <div className="input-wrapper">
                 <User className="input-icon" />
                 <input
                   type="text"
                   name="name"
-                  placeholder="Nombre Completo"
+                  placeholder="Ej. Franklin"
                   value={formData.name}
                   onChange={handleChange}
                   required
@@ -192,13 +195,13 @@ const RegisterPage = () => {
             </div>
 
             <div className="input-group">
-              <label>Apellido Completo</label>
+              <label>Apellidos</label>
               <div className="input-wrapper">
                 <User className="input-icon" />
                 <input
                   type="text"
                   name="lastName"
-                  placeholder="Apellido Completo"
+                  placeholder="Ej. Ramos Campos"
                   value={formData.lastName}
                   onChange={handleChange}
                   required
