@@ -884,6 +884,7 @@ const Dashboard = () => {
         {/* Columna 1: Carga y Parámetros */}
         <div className="clean-card fade-in">
           <div className="section-header-title">
+            <span style={{ width: '4px', height: '38px', background: 'var(--primary)', borderRadius: '9px', display: 'inline-block', flexShrink: 0 }} />
             <Upload size={20} color="var(--primary)" />
             <span>01. Carga de Imagen Dermatoscópica</span>
           </div>
@@ -1181,6 +1182,7 @@ const Dashboard = () => {
         {/* Columna 2: Resultados Diagnósticos y Explicabilidad */}
         <div className="clean-card fade-in">
           <div className="section-header-title">
+            <span style={{ width: '4px', height: '38px', background: 'var(--primary)', borderRadius: '4px', display: 'inline-block', flexShrink: 0 }} />
             <Activity size={20} color="var(--primary)" />
             <span>02. Clasificación Asistida y Explicabilidad Multimodal</span>
           </div>
