@@ -175,8 +175,62 @@ const Dashboard = () => {
     input.click();
   };
 
+  const handleAgeChange = (e) => {
+    const rawVal = e.target.value;
+    if (rawVal === '') {
+      setClinicalData(prev => ({ ...prev, age: '' }));
+      return;
+    }
+    // Filtrar solo dígitos numéricos (evita negativos, decimales y signos)
+    const digitsOnly = rawVal.replace(/\D/g, '');
+    if (digitsOnly === '') {
+      setClinicalData(prev => ({ ...prev, age: '' }));
+      return;
+    }
+    const num = parseInt(digitsOnly, 10);
+    if (num > 100) {
+      setClinicalData(prev => ({ ...prev, age: '100' }));
+      if (toast?.warning) toast.warning('El rango máximo de edad permitido es 100 años.');
+    } else {
+      setClinicalData(prev => ({ ...prev, age: digitsOnly }));
+    }
+  };
+
+  const handleAgeKeyDown = (e) => {
+    // Bloquear teclas de signo negativo, exponencial y decimales
+    if (['-', '+', 'e', 'E', '.', ','].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const isAgeValid = Boolean(
+    clinicalData.age !== '' &&
+    !isNaN(parseInt(clinicalData.age, 10)) &&
+    parseInt(clinicalData.age, 10) >= 18 &&
+    parseInt(clinicalData.age, 10) <= 100
+  );
+  const isGenderValid = Boolean(clinicalData.gender !== '');
+  const clinicalFieldsCount = (isAgeValid ? 1 : 0) + (isGenderValid ? 1 : 0);
+  const isClinicalComplete = isAgeValid && isGenderValid;
+
   const handlePredict = async () => {
-    if (!file) return;
+    if (!file) {
+      setError('Por favor, seleccione o capture una imagen dermatoscópica primero.');
+      if (toast?.warning) toast.warning('Adjunte una imagen dermatoscópica.');
+      return;
+    }
+
+    if (!isAgeValid) {
+      setError('La edad del paciente es obligatoria y debe ser un valor válido entre 18 y 100 años.');
+      if (toast?.warning) toast.warning('Ingrese una edad válida (18 - 100 años).');
+      return;
+    }
+
+    if (!isGenderValid) {
+      setError('El sexo biológico del paciente es un campo obligatorio.');
+      if (toast?.warning) toast.warning('Seleccione el sexo biológico del paciente.');
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -820,7 +874,7 @@ const Dashboard = () => {
         <div>
           <div style={{ fontWeight: 600 }}>Sistema de Análisis Dermatoscópico</div>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0 }}>
-            Cargue la imagen de la lesión acral (archivo o cámara). Puede indicar datos clínicos opcionales del paciente para enriquecer la evaluación del modelo.
+            Cargue la imagen de la lesión acral (archivo o cámara) e ingrese los datos clínicos del paciente (Ambos campos son obligatorios).
           </p>
         </div>
       </div>
@@ -844,30 +898,39 @@ const Dashboard = () => {
 
           {/* Opciones de Carga: Se ocultan cuando ya hay un archivo seleccionado */}
           {!file && (
-            <div className="dropzone-container">
-              <button
-                type="button"
-                className="dropzone-btn"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={loading}
-              >
-                <Upload size={28} color="var(--primary)" />
-                <p style={{ fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.4rem', fontSize: '0.88rem', margin: 0 }}>
-                  Adjuntar Archivo
-                </p>
-              </button>
+            <div style={{ padding: '1.25rem 1rem 2rem', textAlign: 'center' }} className="fade-in">
+              <div className="dropzone-container" style={{ margin: '0 auto 1.75rem', maxWidth: '520px' }}>
+                <button
+                  type="button"
+                  className="dropzone-btn"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={loading}
+                >
+                  <Upload size={28} color="var(--primary)" />
+                  <p style={{ fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.3rem', fontSize: '0.88rem', margin: 0 }}>
+                    Adjuntar Archivo
+                  </p>
+                </button>
 
-              <button
-                type="button"
-                className="dropzone-btn"
-                onClick={handleCameraCapture}
-                disabled={loading}
-              >
-                <Camera size={28} color="var(--primary)" />
-                <p style={{ fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.4rem', fontSize: '0.88rem', margin: 0 }}>
-                  Usar Cámara
-                </p>
-              </button>
+                <button
+                  type="button"
+                  className="dropzone-btn"
+                  onClick={handleCameraCapture}
+                  disabled={loading}
+                >
+                  <Camera size={28} color="var(--primary)" />
+                  <p style={{ fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.3rem', fontSize: '0.88rem', margin: 0 }}>
+                    Usar Cámara
+                  </p>
+                </button>
+              </div>
+
+              <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>
+                Imagen no seleccionada
+              </h3>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', maxWidth: '380px', margin: '0.5rem auto 0' }}>
+                Proporcione una <strong>Imagen</strong> de la lesión para habilitar el registro clínico y la evaluación.
+              </p>
             </div>
           )}
 
@@ -914,105 +977,148 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* Panel Expandido de Datos Clínicos */}
-          <div className="clinical-panel" style={{ marginTop: '1.25rem', border: '1px solid var(--border-color)', borderRadius: '12px', background: '#f8fafc', padding: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-primary)' }}>
-                <Stethoscope size={17} color="var(--primary)" />
-                <span>Datos Clínicos del Paciente</span>
-              </div>
-              <span style={{
-                fontSize: '0.72rem',
-                padding: '0.2rem 0.6rem',
-                borderRadius: '20px',
-                background: Object.values(clinicalData).some(v => v !== '') ? '#dcfce7' : '#e0f2fe',
-                color: Object.values(clinicalData).some(v => v !== '') ? '#065f46' : '#0369a1',
-                fontWeight: 700,
-                border: Object.values(clinicalData).some(v => v !== '') ? '1px solid #a7f3d0' : '1px solid #bae6fd'
+          {/* Panel de Datos Clínicos y Botones: Aparecen recién cuando se carga la imagen */}
+          {file && (
+            <div className="fade-in">
+              {/* Panel Expandido de Datos Clínicos (Obligatorio) */}
+              <div className="clinical-panel" style={{
+                marginTop: '1.25rem',
+                border: `1px solid ${isClinicalComplete ? 'var(--border-color)' : '#fecdd3'}`,
+                borderRadius: '12px',
+                background: isClinicalComplete ? '#f8fafc' : '#fffbfa',
+                padding: '1rem',
+                transition: 'all 0.25s ease'
               }}>
-                {Object.values(clinicalData).filter(v => v !== '').length > 0
-                  ? `${Object.values(clinicalData).filter(v => v !== '').length}/2 ingresados`
-                  : 'Opcional'}
-              </span>
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-primary)' }}>
+                    <Stethoscope size={17} color="var(--primary)" />
+                    <span>Datos Clínicos del Paciente</span>
+                  </div>
+                  <span style={{
+                    fontSize: '0.72rem',
+                    padding: '0.22rem 0.65rem',
+                    borderRadius: '20px',
+                    background: isClinicalComplete ? '#dcfce7' : '#fff1f2',
+                    color: isClinicalComplete ? '#065f46' : '#be123c',
+                    fontWeight: 700,
+                    border: isClinicalComplete ? '1px solid #a7f3d0' : '1px solid #fecdd3',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}>
+                    {isClinicalComplete ? (
+                      <>
+                        <CheckCircle2 size={13} color="#059669" />
+                        <span>Completado (2/2)</span>
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle size={13} color="#be123c" />
+                        <span>Obligatorio ({clinicalFieldsCount}/2)</span>
+                      </>
+                    )}
+                  </span>
+                </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
-              <div className="clinical-field">
-                <label htmlFor="patient-age" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>Edad</label>
-                <input
-                  id="patient-age"
-                  type="number"
-                  min="1" max="110"
-                  placeholder="Ej. 55"
-                  value={clinicalData.age}
-                  onChange={e => setClinicalData(p => ({ ...p, age: e.target.value }))}
-                  style={{ width: '100%', padding: '0.55rem 0.75rem', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '0.88rem', background: 'white', boxSizing: 'border-box' }}
-                />
-              </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+                  <div className="clinical-field">
+                    <label htmlFor="patient-age" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                      <span>Edad <span style={{ color: 'var(--danger)' }}>*</span></span>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 600, color: '#94a3b8', textTransform: 'none' }}>18 a 100 años</span>
+                    </label>
+                    <input
+                      id="patient-age"
+                      type="number"
+                      min="18"
+                      max="100"
+                      placeholder="Ej. 55"
+                      value={clinicalData.age}
+                      onChange={handleAgeChange}
+                      onKeyDown={handleAgeKeyDown}
+                      style={{
+                        width: '100%',
+                        padding: '0.55rem 0.75rem',
+                        border: `1px solid ${clinicalData.age !== '' && !isAgeValid ? 'var(--danger)' : 'var(--border-color)'}`,
+                        borderRadius: '8px',
+                        fontSize: '0.88rem',
+                        background: 'white',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
 
-              <div className="clinical-field">
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>Sexo Biológico</label>
-                <div style={{ position: 'relative' }}>
-                  <select
-                    value={clinicalData.gender}
-                    onChange={e => setClinicalData(p => ({ ...p, gender: e.target.value }))}
-                    style={{
-                      width: '100%',
-                      padding: '0.55rem 2rem 0.55rem 0.75rem',
-                      border: '1px solid var(--border-color)',
-                      borderRadius: '8px',
-                      fontSize: '0.88rem',
-                      background: 'white',
-                      boxSizing: 'border-box',
-                      appearance: 'none',
-                      color: clinicalData.gender ? 'var(--text-primary)' : 'var(--text-secondary)',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <option value="" style={{ color: 'var(--text-secondary)' }}>Seleccionar</option>
-                    <option value="0" style={{ color: 'var(--text-primary)' }}>Masculino</option>
-                    <option value="1" style={{ color: 'var(--text-primary)' }}>Femenino</option>
-                  </select>
-                  <ChevronDown
-                    size={16}
-                    color="var(--text-secondary)"
-                    style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      pointerEvents: 'none'
-                    }}
-                  />
+                  <div className="clinical-field">
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                      Sexo Biológico <span style={{ color: 'var(--danger)' }}>*</span>
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <select
+                        value={clinicalData.gender}
+                        onChange={e => setClinicalData(p => ({ ...p, gender: e.target.value }))}
+                        style={{
+                          width: '100%',
+                          padding: '0.55rem 2rem 0.55rem 0.75rem',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '8px',
+                          fontSize: '0.88rem',
+                          background: 'white',
+                          boxSizing: 'border-box',
+                          appearance: 'none',
+                          color: clinicalData.gender ? 'var(--text-primary)' : 'var(--text-secondary)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <option value="" style={{ color: 'var(--text-secondary)' }}>Seleccionar</option>
+                        <option value="0" style={{ color: 'var(--text-primary)' }}>Masculino</option>
+                        <option value="1" style={{ color: 'var(--text-primary)' }}>Femenino</option>
+                      </select>
+                      <ChevronDown
+                        size={16}
+                        color="var(--text-secondary)"
+                        style={{
+                          position: 'absolute',
+                          right: '10px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          pointerEvents: 'none'
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              {/* Botones de Acción */}
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
+                <button
+                  onClick={handlePredict}
+                  className="btn-analyze-action"
+                  disabled={!isClinicalComplete || loading}
+                  title={
+                    !isClinicalComplete
+                      ? 'Complete los datos clínicos obligatorios (Edad y Sexo)'
+                      : 'Iniciar análisis asistido por IA'
+                  }
+                >
+                  {loading ? (
+                    <span>Ejecutando Pipeline...</span>
+                  ) : (
+                    <>
+                      <Activity size={18} />
+                      <span>Analizar Lesión</span>
+                    </>
+                  )}
+                </button>
+
+                {(file || result || rejectionData) && (
+                  <button onClick={handleClear} className="btn-clear-action" title="Reiniciar">
+                    <RotateCcw size={16} />
+                    <span>Limpiar</span>
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Botones de Acción */}
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button
-              onClick={handlePredict}
-              className="btn-analyze-action"
-              disabled={!file || loading}
-            >
-              {loading ? (
-                <span>Ejecutando Pipeline...</span>
-              ) : (
-                <>
-                  <Activity size={18} />
-                  <span>Analizar Lesión</span>
-                </>
-              )}
-            </button>
-
-            {(file || result || rejectionData) && (
-              <button onClick={handleClear} className="btn-clear-action" title="Reiniciar">
-                <RotateCcw size={16} />
-                <span>Limpiar</span>
-              </button>
-            )}
-          </div>
+          )}
 
           {/* Animación de Pasos de Carga */}
           {loading && (
@@ -1083,9 +1189,9 @@ const Dashboard = () => {
           {!result && !rejectionData && !loading && (
             <div style={{ textAlign: 'center', padding: '4.5rem 2rem', color: 'var(--text-secondary)' }}>
               <ImageIcon size={64} color="#cbd5e1" style={{ marginBottom: '1rem' }} />
-              <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>Sin Imagen en Análisis</h3>
+              <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>Análisis Pendiente</h3>
               <p style={{ fontSize: '0.88rem', maxWidth: '380px', margin: '0.5rem auto 0' }}>
-                Cargue una imagen dermatoscópica en el panel izquierdo y presione <strong>Analizar Lesión</strong> para iniciar la evaluación.
+                Complete el registro en el panel izquierdo y presione <strong>Analizar Lesión</strong> para obterner los resultados.
               </p>
             </div>
           )}
