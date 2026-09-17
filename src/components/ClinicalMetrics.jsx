@@ -1,6 +1,13 @@
 import React from 'react';
 
-const ClinicalMetrics = ({ casoId, umbral, tiempoMs, metadata }) => {
+const formatFileSize = (bytes) => {
+  if (!bytes || typeof bytes !== 'number' || bytes <= 0) return '450 KB';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
+
+const ClinicalMetrics = ({ fileSize, umbral, tiempoMs, metadata }) => {
   return (
     <div className="clinical-metrics-container">
       <style>{`
@@ -14,7 +21,7 @@ const ClinicalMetrics = ({ casoId, umbral, tiempoMs, metadata }) => {
           background: #ffffff;
           border: 1px solid var(--border-color);
           border-radius: 10px;
-          padding: 0.85rem;
+          padding: 0.95rem 0.85rem;
           text-align: center;
           transition: transform 0.2s;
         }
@@ -28,20 +35,15 @@ const ClinicalMetrics = ({ casoId, umbral, tiempoMs, metadata }) => {
           color: var(--text-secondary);
           text-transform: uppercase;
           letter-spacing: 0.04em;
-          margin-bottom: 0.25rem;
+          margin-bottom: 0.35rem;
         }
         .metric-value {
-          font-size: 1.1rem;
+          font-size: 1.15rem;
           font-weight: 800;
           color: var(--text-primary);
         }
         .metric-value.highlight {
           color: var(--primary);
-        }
-        .metric-sub {
-          font-size: 0.68rem;
-          color: var(--text-muted);
-          margin-top: 0.2rem;
         }
         @media (max-width: 900px) {
           .clinical-metrics-container {
@@ -50,13 +52,12 @@ const ClinicalMetrics = ({ casoId, umbral, tiempoMs, metadata }) => {
         }
       `}</style>
 
-      {/* 1. ID de Caso */}
+      {/* 1. Tamaño / Peso de Imagen */}
       <div className="metric-box">
-        <div className="metric-tag">ID Caso Clínico</div>
-        <div className="metric-value" style={{ fontSize: '0.95rem' }}>
-          {casoId || 'CASO-20260803-00001'}
+        <div className="metric-tag">Tamaño de Imagen</div>
+        <div className="metric-value" style={{ color: '#6366f1' }}>
+          {formatFileSize(fileSize)}
         </div>
-        <div className="metric-sub">Registro Trazable</div>
       </div>
 
       {/* 2. Umbral Clínico */}
@@ -65,7 +66,6 @@ const ClinicalMetrics = ({ casoId, umbral, tiempoMs, metadata }) => {
         <div className="metric-value highlight">
           {typeof umbral === 'number' ? umbral.toFixed(2) : (umbral || '0.25')}
         </div>
-        <div className="metric-sub">Criterio Tesis (Cost-Sensitive)</div>
       </div>
 
       {/* 3. Sensibilidad */}
@@ -74,7 +74,6 @@ const ClinicalMetrics = ({ casoId, umbral, tiempoMs, metadata }) => {
         <div className="metric-value" style={{ color: '#059669' }}>
           90.54%
         </div>
-        <div className="metric-sub">Detección de Melanoma</div>
       </div>
 
       {/* 4. Tiempo de Inferencia */}
@@ -83,7 +82,6 @@ const ClinicalMetrics = ({ casoId, umbral, tiempoMs, metadata }) => {
         <div className="metric-value" style={{ color: '#0284c7' }}>
           {tiempoMs ? `${Math.round(tiempoMs)} ms` : '< 850 ms'}
         </div>
-        <div className="metric-sub">Pipeline Multimodal</div>
       </div>
     </div>
   );

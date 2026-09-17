@@ -133,10 +133,16 @@ const TripleComparison = ({ segmentationImg, gradcamImg }) => {
           </div>
           <div
             className="image-wrapper"
-            onClick={() => setModalImage({ src: segmentationImg, title: 'Segmentación PDI (DullRazor + Umbralización Otsu)' })}
+            onClick={() => segmentationImg && setModalImage({ src: segmentationImg, title: 'Segmentación PDI (DullRazor + Umbralización Otsu)' })}
           >
-            <img src={segmentationImg} alt="Segmentación PDI" />
-            <div className="btn-zoom"><Maximize2 size={18} /></div>
+            {segmentationImg ? (
+              <img src={segmentationImg} alt="Segmentación PDI" />
+            ) : (
+              <div style={{ color: '#94a3b8', fontSize: '0.8rem', textAlign: 'center', padding: '1.5rem' }}>
+                Segmentación no disponible
+              </div>
+            )}
+            {segmentationImg && <div className="btn-zoom"><Maximize2 size={18} /></div>}
           </div>
         </div>
 
@@ -148,10 +154,16 @@ const TripleComparison = ({ segmentationImg, gradcamImg }) => {
           </div>
           <div
             className="image-wrapper"
-            onClick={() => setModalImage({ src: gradcamImg, title: 'Mapa de Activación Grad-CAM (EfficientNet-B3)' })}
+            onClick={() => gradcamImg && setModalImage({ src: gradcamImg, title: 'Mapa de Activación Grad-CAM (EfficientNet-B3)' })}
           >
-            <img src={gradcamImg} alt="Grad-CAM" />
-            <div className="btn-zoom"><Maximize2 size={18} /></div>
+            {gradcamImg ? (
+              <img src={gradcamImg} alt="Grad-CAM" />
+            ) : (
+              <div style={{ color: '#94a3b8', fontSize: '0.8rem', textAlign: 'center', padding: '1.5rem' }}>
+                Mapa Grad-CAM no disponible
+              </div>
+            )}
+            {gradcamImg && <div className="btn-zoom"><Maximize2 size={18} /></div>}
           </div>
         </div>
       </div>

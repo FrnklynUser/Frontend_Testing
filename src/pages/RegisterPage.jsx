@@ -186,7 +186,7 @@ const RegisterPage = () => {
                 <input
                   type="text"
                   name="name"
-                  placeholder="Ej. Franklin"
+                  placeholder="Ej. Manuel Gabriel"
                   value={formData.name}
                   onChange={handleChange}
                   required
@@ -201,7 +201,7 @@ const RegisterPage = () => {
                 <input
                   type="text"
                   name="lastName"
-                  placeholder="Ej. Ramos Campos"
+                  placeholder="Ej. Rodriguez Bustamante"
                   value={formData.lastName}
                   onChange={handleChange}
                   required
