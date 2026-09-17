@@ -494,15 +494,16 @@ const Dashboard = () => {
           width: 38px;
           height: 38px;
           border-radius: 50%;
-          background: var(--primary-light);
-          color: var(--primary);
+          background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+          color: #ffffff;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 700;
-          font-size: 0.85rem;
+          font-weight: 800;
+          font-size: 0.88rem;
+          letter-spacing: 0.02em;
           border: 2px solid white;
-          box-shadow: 0 0 0 2px var(--primary-light);
+          box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.28), 0 2px 6px rgba(2, 132, 199, 0.22);
         }
         .user-details {
           display: flex;
@@ -893,10 +894,7 @@ const Dashboard = () => {
             onClick={toggleUserDropdown}
             style={{ cursor: 'pointer', padding: '0.35rem 0.6rem', borderRadius: '10px', transition: 'background 0.2s', background: showUserDropdown ? '#f1f5f9' : 'transparent' }}
           >
-            <div className="user-avatar" style={{
-              border: '2px solid white',
-              boxShadow: '0 0 0 2px var(--primary-light)'
-            }}>
+            <div className="user-avatar">
               {getInitials(displayName)}
             </div>
             <div className="user-details">
@@ -1380,9 +1378,9 @@ const Dashboard = () => {
                     {diagnosticoTexto}
                   </div>
                   <div style={{ fontSize: '0.8rem', fontWeight: 600, marginTop: '0.2rem' }}>
-                    Nivel de Certeza: {result.nivel_confianza || (() => {
+                    Nivel de Certeza: {(() => {
                       const pct = parseFloat(result.probabilidad_ia) || 0;
-                      if (pct >= 80) return 'Alto';
+                      if (pct >= 75) return 'Alto';
                       if (pct >= 50) return 'Moderado';
                       return 'Bajo';
                     })()}
@@ -1407,8 +1405,8 @@ const Dashboard = () => {
 
               {/* Visualización de Explicabilidad PDI y Grad-CAM */}
               <TripleComparison
-                segmentationImg={result.segmentacion}
-                gradcamImg={result.gradcam}
+                segmentationImg={result.segmentacion || result.segmentation || result.segmentation_b64}
+                gradcamImg={result.gradcam || result.gradcam_b64}
               />
 
               {/* Variables Morfocromáticas y Descriptores PDI Detectados */}
@@ -1538,24 +1536,18 @@ const Dashboard = () => {
       </div>
 
       {/* ── Pie de Página: Aviso Ético y Legal ── */}
-      <footer style={{ marginTop: '2.5rem', textAlign: 'center' }}>
+      <footer style={{ marginTop: '2rem', marginBottom: '1.5rem', textAlign: 'center' }}>
         <div style={{
-          display: 'flex',
+          display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '0.6rem',
+          gap: '0.45rem',
           color: 'var(--text-secondary)',
-          backgroundColor: 'white',
-          padding: '1.25rem 2rem',
-          borderRadius: 'var(--radius-md)',
-          fontSize: '0.85rem',
-          border: '1px solid var(--border-color)',
-          boxShadow: 'var(--shadow-sm)',
-          maxWidth: '960px',
-          margin: '0 auto'
+          fontSize: '0.8rem',
+          fontWeight: 500
         }}>
-          <ShieldCheck size={16} />
-          Aviso: Este sistema es una herramienta complementaria y no reemplaza el criterio médico profesional.
+          <ShieldCheck size={15} color="var(--text-secondary)" />
+          <span>Aviso: Este sistema es una herramienta complementaria y no reemplaza el criterio médico profesional.</span>
         </div>
       </footer>
 
@@ -1599,7 +1591,7 @@ const Dashboard = () => {
                 height: '50px',
                 fontSize: '1.2rem',
                 border: '3px solid white',
-                boxShadow: '0 0 0 3px var(--primary-light)',
+                boxShadow: '0 0 0 3px rgba(2, 132, 199, 0.3), 0 4px 10px rgba(2, 132, 199, 0.25)',
                 flexShrink: 0
               }}>
                 {getInitials(displayName)}
