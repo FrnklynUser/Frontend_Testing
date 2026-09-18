@@ -297,9 +297,17 @@ const Dashboard = () => {
       }
     } catch (err) {
       console.error('Error durante la predicción:', err);
-      const serverMsg = err.response?.data?.mensaje || err.message;
-      if (toast?.error) toast.error('Error de comunicación con el servidor.');
-      setError(`No se pudo procesar la imagen: ${serverMsg}. Asegúrese de que el backend Flask esté ejecutándose en http://localhost:5000.`);
+      if (toast?.error) toast.error('No se pudo establecer conexión con el servidor.');
+
+      let friendlyMessage = 'No se pudo conectar con el servidor de análisis. Por favor, verifique su conexión o intente nuevamente.';
+      if (err.response?.data?.mensaje) {
+        friendlyMessage = err.response.data.mensaje;
+      } else if (err.code === 'ECONNABORTED' || err.message?.toLowerCase().includes('timeout')) {
+        friendlyMessage = 'El tiempo de espera para el análisis ha expirado. Por favor, vuelva a intentarlo.';
+      } else if (!err.response) {
+        friendlyMessage = 'El servidor de análisis no se encuentra disponible temporalmente. Por favor, intente nuevamente más tarde.';
+      }
+      setError(friendlyMessage);
     } finally {
       setLoading(false);
     }
@@ -576,11 +584,16 @@ const Dashboard = () => {
         .section-header-title {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
-          font-size: 1.15rem;
+          gap: 0.65rem;
+          font-size: 1.12rem;
           font-weight: 700;
           margin-bottom: 1.25rem;
           color: var(--text-primary);
+          background: transparent;
+          border: 1px solid transparent;
+          border-left: 4px solid var(--primary);
+          border-radius: 8px;
+          padding: 0.4rem 0.75rem;
         }
         .dropzone-container {
           display: flex;
@@ -792,11 +805,13 @@ const Dashboard = () => {
         .diagnosis-result-banner.melanoma {
           background: var(--danger-bg);
           border-color: #fecdd3;
+          border-left: 5px solid var(--danger);
           color: var(--danger);
         }
         .diagnosis-result-banner.benigno {
           background: var(--success-bg);
           border-color: #a7f3d0;
+          border-left: 5px solid var(--success);
           color: var(--success);
         }
         .diag-title-lg {
@@ -809,9 +824,21 @@ const Dashboard = () => {
         .diag-prob-tag {
           font-size: 1.15rem;
           font-weight: 800;
-          padding: 0.25rem 0.75rem;
+          padding: 0.35rem 0.9rem;
           border-radius: 20px;
-          background: white;
+          color: #ffffff;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+        .diagnosis-result-banner.benigno .diag-prob-tag {
+          background: var(--success);
+          color: #ffffff;
+        }
+        .diagnosis-result-banner.melanoma .diag-prob-tag {
+          background: var(--danger);
+          color: #ffffff;
         }
         .recommendation-box {
           margin-top: 1.25rem;
@@ -980,7 +1007,6 @@ const Dashboard = () => {
         {/* Columna 1: Carga y Parámetros */}
         <div className="clean-card fade-in">
           <div className="section-header-title">
-            <span style={{ width: '4px', height: '38px', background: 'var(--primary)', borderRadius: '9px', display: 'inline-block', flexShrink: 0 }} />
             <Upload size={20} color="var(--primary)" />
             <span>01. Carga de Imagen Dermatoscópica</span>
           </div>
@@ -1287,7 +1313,6 @@ const Dashboard = () => {
         {/* Columna 2: Resultados Diagnósticos y Explicabilidad */}
         <div className="clean-card fade-in">
           <div className="section-header-title">
-            <span style={{ width: '4px', height: '38px', background: 'var(--primary)', borderRadius: '4px', display: 'inline-block', flexShrink: 0 }} />
             <Activity size={20} color="var(--primary)" />
             <span>02. Clasificación Asistida y Explicabilidad Multimodal</span>
           </div>
@@ -1385,23 +1410,12 @@ const Dashboard = () => {
               {/* Banner de Diagnóstico */}
               <div className={`diagnosis-result-banner ${isMelanoma ? 'melanoma' : 'benigno'}`}>
                 <div>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    Clasificación Computacional Asistida
-                  </div>
                   <div className="diag-title-lg">
                     {diagnosticoTexto}
                   </div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, marginTop: '0.2rem' }}>
-                    Nivel de Certeza: {(() => {
-                      const pct = parseFloat(result.probabilidad_ia) || 0;
-                      if (pct >= 75) return 'Alto';
-                      if (pct >= 50) return 'Moderado';
-                      return 'Bajo';
-                    })()}
-                  </div>
                 </div>
 
-                <div className="diag-prob-tag" style={{ color: isMelanoma ? 'var(--danger)' : 'var(--success)' }}>
+                <div className="diag-prob-tag">
                   {result.probabilidad_ia || (isMelanoma ? '85.4%' : '90.5%')}
                 </div>
               </div>
@@ -1421,6 +1435,8 @@ const Dashboard = () => {
               <TripleComparison
                 segmentationImg={normalizeImageSrc(result.segmentacion || result.segmentation || result.segmentation_b64, preview)}
                 gradcamImg={normalizeImageSrc(result.gradcam || result.gradcam_b64, preview)}
+                isMelanoma={isMelanoma}
+                diagnostico={diagnosticoTexto}
               />
 
               {/* Variables Morfocromáticas y Descriptores PDI Detectados */}
@@ -1434,7 +1450,7 @@ const Dashboard = () => {
       <div className="clean-card fade-in" style={{ marginTop: '2rem' }}>
         <div className="section-header-title">
           <History size={20} color="var(--accent)" />
-          <span>Historial de Casos Evaluados</span>
+          <span>03. Historial de Casos Evaluados</span>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>

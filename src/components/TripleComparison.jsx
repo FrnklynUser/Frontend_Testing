@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Maximize2, X } from 'lucide-react';
+import { Maximize2, Scan, Sparkles, X } from 'lucide-react';
 
-const TripleComparison = ({ segmentationImg, gradcamImg }) => {
+const TripleComparison = ({ segmentationImg, gradcamImg, isMelanoma = false, diagnostico = '' }) => {
   const [modalImage, setModalImage] = useState(null);
 
   return (
@@ -9,6 +9,15 @@ const TripleComparison = ({ segmentationImg, gradcamImg }) => {
       <style>{`
         .triple-comparison-container {
           margin-top: 1.25rem;
+        }
+        .comp-section-title {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: var(--text-primary);
+          margin-bottom: 0.65rem;
         }
         .images-grid {
           display: grid;
@@ -124,11 +133,16 @@ const TripleComparison = ({ segmentationImg, gradcamImg }) => {
         }
       `}</style>
 
+      <div className="comp-section-title">
+        <Scan size={17} color="var(--primary)" />
+        <span>Interpretación de Explicabilidad Visual</span>
+      </div>
+
       <div className="images-grid">
         {/* 1. Segmentación PDI */}
         <div className="image-card">
           <div className="image-header">
-            <span>1. Segmentación PDI</span>
+            <span>a) Segmentación PDI</span>
             <span className="badge-tech" style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem', background: '#f1f5f9', borderRadius: '4px', color: 'var(--text-secondary)' }}>DullRazor + Otsu</span>
           </div>
           <div
@@ -149,7 +163,7 @@ const TripleComparison = ({ segmentationImg, gradcamImg }) => {
         {/* 2. Grad-CAM */}
         <div className="image-card">
           <div className="image-header">
-            <span>2. Zonas de Interés</span>
+            <span>b) Zonas de Interés</span>
             <span className="badge-tech" style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem', background: '#f1f5f9', borderRadius: '4px', color: 'var(--text-secondary)' }}>Grad-CAM (CNN)</span>
           </div>
           <div
@@ -168,8 +182,37 @@ const TripleComparison = ({ segmentationImg, gradcamImg }) => {
         </div>
       </div>
 
-      <div className="gradcam-legend-box">
-        💡 <strong>Interpretación de Explicabilidad Visual</strong>: Las zonas con tonalidad <span style={{ color: '#e11d48', fontWeight: 700 }}>roja / cálida</span> señalan las estructuras morfológicas y cromáticas que tuvieron mayor peso e influencia en la inferencia del modelo deep learning.
+      <div
+        className="gradcam-legend-box"
+        style={{
+          borderLeftColor: isMelanoma ? 'var(--danger, #e11d48)' : '#0284c7'
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            fontWeight: 700,
+            fontSize: '0.82rem',
+            color: isMelanoma ? 'var(--danger, #e11d48)' : '#0284c7',
+            marginBottom: '0.35rem'
+          }}
+        >
+          <Sparkles size={15} />
+          <span>Foco de atención del modelo ({isMelanoma ? 'Sospecha de malignidad' : 'Patrón benigno'})</span>
+        </div>
+        <p style={{ margin: 0, lineHeight: 1.45 }}>
+          {isMelanoma ? (
+            <>
+              Las zonas con tonalidad <span style={{ color: '#e11d48', fontWeight: 700 }}>roja / cálida</span> señalan regiones con alta atipia morfológica, asimetría o desorganización pigmentaria acral que tuvieron mayor peso en la sospecha de <strong>Melanoma Acral</strong> identificadas por el modelo.
+            </>
+          ) : (
+            <>
+              Las zonas con tonalidad <span style={{ color: '#e11d48', fontWeight: 700 }}>roja / cálida</span> destacan los patrones de regularidad estructural y distribución cromática uniforme compatibles con <strong>Nevo Acral (Benigno)</strong> analizados por el modelo.
+            </>
+          )}
+        </p>
       </div>
 
       {modalImage && (

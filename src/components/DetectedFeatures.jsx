@@ -7,28 +7,28 @@ const FEATURES_DICTIONARY = {
   abcd_irregularidad_borde: { label: 'Irregularidad de Borde', category: 'ABCD' },
   abcd_variacion_color: { label: 'Variación Cromática', category: 'ABCD' },
   abcd_diametro: { label: 'Diámetro Estimado (mm)', category: 'ABCD' },
-  
+
   // Textura GLCM
   glcm_contraste: { label: 'Contraste GLCM', category: 'Textura' },
   glcm_homogeneidad: { label: 'Homogeneidad GLCM', category: 'Textura' },
   glcm_energia: { label: 'Energía GLCM', category: 'Textura' },
   glcm_correlacion: { label: 'Correlación GLCM', category: 'Textura' },
-  
+
   // Morfología PDI
   morfologia_compacidad: { label: 'Compacidad Morfológica', category: 'Morfología' },
   morfologia_excentricidad: { label: 'Excentricidad de Contorno', category: 'Morfología' },
   morfologia_ratio_area: { label: 'Ratio de Área / Cobertura', category: 'Morfología' },
-  
+
   // Textura y Color
   textura_rugosidad_lbp: { label: 'Rugosidad Textural (LBP)', category: 'Textura' },
   color_uniformidad_hsv: { label: 'Uniformidad de Saturación (HSV)', category: 'Color' },
-  
+
   // Patrones Dermatoscópicos
   dermatoscopy_vascularidad: { label: 'Patrón Vascular', category: 'Dermatoscopía' },
   dermatoscopy_red_pigmentaria: { label: 'Red de Pigmento', category: 'Dermatoscopía' },
   dermatoscopy_estrias: { label: 'Estrías / Proyecciones', category: 'Dermatoscopía' },
   dermatoscopy_estructuras_regresion: { label: 'Estructuras de Regresión', category: 'Dermatoscopía' },
-  
+
   // Datos Clínicos
   edad: { label: 'Edad del Paciente', category: 'Clínica' },
   genero: { label: 'Sexo Biológico', category: 'Clínica' },
@@ -115,11 +115,9 @@ const DetectedFeatures = ({ caracteristicas }) => {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          font-size: 0.85rem;
-          font-weight: 800;
-          color: var(--primary-dark);
-          text-transform: uppercase;
-          letter-spacing: 0.03em;
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: var(--text-primary);
           margin-bottom: 0.25rem;
         }
         .features-sub {
