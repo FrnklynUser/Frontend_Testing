@@ -112,14 +112,14 @@ const Dashboard = () => {
     try {
       const data = await systemService.getHealth();
       if (data.status === 'OK') {
-        setServerStatus('CONECTADO');
+        setServerStatus('Conectado');
         setIsServerOnline(true);
       } else {
-        setServerStatus('DESCONECTADO');
+        setServerStatus('Desconectado');
         setIsServerOnline(false);
       }
     } catch {
-      setServerStatus('DESCONECTADO');
+      setServerStatus('Desconectado');
       setIsServerOnline(false);
     }
   };
@@ -397,11 +397,25 @@ const Dashboard = () => {
   const stats = getStats();
   const displayName = getUserDisplayName(user);
   const isMelanoma = Boolean(
-    result?.clase === 1 || 
-    result?.diagnostico?.toLowerCase().includes('melanoma') || 
+    result?.clase === 1 ||
+    result?.diagnostico?.toLowerCase().includes('melanoma') ||
     result?.prediction?.toLowerCase().includes('melanoma')
   );
   const diagnosticoTexto = result?.diagnostico || result?.prediction || (isMelanoma ? 'Melanoma Acral' : 'Nevo Acral (Benigno)');
+
+  const normalizeImageSrc = (img, fallback) => {
+    if (!img) return fallback || null;
+    if (typeof img === 'string') {
+      const trimmed = img.trim();
+      if (trimmed.startsWith('data:image/') || trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('blob:')) {
+        return trimmed;
+      }
+      if (trimmed.length > 50) {
+        return `data:image/png;base64,${trimmed}`;
+      }
+    }
+    return fallback || null;
+  };
 
   return (
     <div className="dashboard-wrapper">
@@ -1192,8 +1206,8 @@ const Dashboard = () => {
                     result
                       ? 'La lesión ya ha sido evaluada. Presione "Limpiar" para reiniciar.'
                       : !isClinicalComplete
-                      ? 'Complete los datos clínicos obligatorios (Edad y Sexo)'
-                      : 'Iniciar análisis asistido por IA'
+                        ? 'Complete los datos clínicos obligatorios (Edad y Sexo)'
+                        : 'Iniciar análisis asistido por IA'
                   }
                 >
                   {loading ? (
@@ -1405,8 +1419,8 @@ const Dashboard = () => {
 
               {/* Visualización de Explicabilidad PDI y Grad-CAM */}
               <TripleComparison
-                segmentationImg={result.segmentacion || result.segmentation || result.segmentation_b64}
-                gradcamImg={result.gradcam || result.gradcam_b64}
+                segmentationImg={normalizeImageSrc(result.segmentacion || result.segmentation || result.segmentation_b64, preview)}
+                gradcamImg={normalizeImageSrc(result.gradcam || result.gradcam_b64, preview)}
               />
 
               {/* Variables Morfocromáticas y Descriptores PDI Detectados */}
