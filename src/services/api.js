@@ -154,48 +154,55 @@ const getHistoryKey = (username) => `pda_history_${username || 'default'}`;
 
 export const historyService = {
   getHistory: async (username) => {
+    const key = getHistoryKey(username);
     try {
-      const key = getHistoryKey(username);
-      const saved = localStorage.getItem(key);
-      return saved ? JSON.parse(saved) : [];
+      const response = await api.get(`/history/${username || 'default'}`);
+      if (Array.isArray(response.data)) {
+        localStorage.setItem(key, JSON.stringify(response.data));
+        return response.data;
+      }
     } catch (err) {
-      console.error('Error al obtener historial:', err);
-      return [];
+      console.warn('Usando almacenamiento local para historial:', err);
     }
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : [];
   },
   saveItem: async (analysisItem, username) => {
+    const key = getHistoryKey(username);
+    const current = await historyService.getHistory(username);
+    const updated = [analysisItem, ...current.filter(i => i.id !== analysisItem.id)];
+    localStorage.setItem(key, JSON.stringify(updated));
+
     try {
-      const key = getHistoryKey(username);
-      const current = await historyService.getHistory(username);
-      const updated = [analysisItem, ...current];
-      localStorage.setItem(key, JSON.stringify(updated));
-      return updated;
+      await api.post(`/history/${username || 'default'}`, analysisItem);
     } catch (err) {
-      console.error('Error al guardar en historial:', err);
-      return [];
+      console.warn('No se pudo guardar historial en backend:', err);
     }
+    return updated;
   },
   deleteItem: async (analysisId, username) => {
+    const key = getHistoryKey(username);
+    const current = await historyService.getHistory(username);
+    const updated = current.filter(item => item.id !== analysisId);
+    localStorage.setItem(key, JSON.stringify(updated));
+
     try {
-      const key = getHistoryKey(username);
-      const current = await historyService.getHistory(username);
-      const updated = current.filter(item => item.id !== analysisId);
-      localStorage.setItem(key, JSON.stringify(updated));
-      return updated;
+      await api.delete(`/history/${username || 'default'}/${analysisId}`);
     } catch (err) {
-      console.error('Error al eliminar registro de historial:', err);
-      return [];
+      console.warn('No se pudo eliminar de backend:', err);
     }
+    return updated;
   },
   clearHistory: async (username) => {
+    const key = getHistoryKey(username);
+    localStorage.removeItem(key);
+
     try {
-      const key = getHistoryKey(username);
-      localStorage.removeItem(key);
-      return [];
+      await api.delete(`/history/${username || 'default'}`);
     } catch (err) {
-      console.error('Error al limpiar historial:', err);
-      return [];
+      console.warn('No se pudo limpiar historial en backend:', err);
     }
+    return [];
   }
 };
 
