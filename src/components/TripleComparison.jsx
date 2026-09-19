@@ -98,38 +98,65 @@ const TripleComparison = ({ segmentationImg, gradcamImg, isMelanoma = false, dia
         .zoom-modal {
           position: fixed;
           inset: 0;
-          background: rgba(15, 23, 42, 0.9);
+          background: transparent;
           z-index: 1100;
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 2rem;
+          animation: fadeIn 0.15s ease-out;
         }
         .zoom-modal-content {
           max-width: 90vw;
-          max-height: 85vh;
+          max-height: 90vh;
           position: relative;
           text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          transform: translateY(-80px);
         }
-        .zoom-modal-content img {
+        .zoom-modal-image-wrapper {
+          position: relative;
+          display: inline-block;
+          line-height: 0;
           max-width: 100%;
-          max-height: 80vh;
+        }
+        .zoom-modal-image-wrapper img {
+          max-width: 100%;
+          max-height: 75vh;
           border-radius: 12px;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.15);
+          background: #ffffff;
+          display: block;
+          object-fit: contain;
         }
         .btn-close-zoom {
           position: absolute;
-          top: -40px;
-          right: 0;
-          background: white;
-          color: #0f172a;
-          padding: 6px 12px;
-          border-radius: 20px;
-          font-weight: 700;
-          font-size: 0.85rem;
+          top: 12px;
+          right: 12px;
+          width: 34px;
+          height: 34px;
+          background: rgba(15, 23, 42, 0.65);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          color: #ffffff;
+          border-radius: 50%;
           display: flex;
           align-items: center;
-          gap: 4px;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: 20;
+          padding: 0;
+        }
+        .btn-close-zoom:hover {
+          background: rgba(225, 29, 72, 0.9);
+          border-color: rgba(255, 255, 255, 0.5);
+          transform: scale(1.1);
+          color: #ffffff;
         }
       `}</style>
 
@@ -218,13 +245,17 @@ const TripleComparison = ({ segmentationImg, gradcamImg, isMelanoma = false, dia
       {modalImage && (
         <div className="zoom-modal" onClick={() => setModalImage(null)}>
           <div className="zoom-modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="btn-close-zoom" onClick={() => setModalImage(null)}>
-              <X size={16} /> Cerrar
-            </button>
-            <img src={modalImage.src} alt={modalImage.title} />
-            <p style={{ color: 'white', marginTop: '0.75rem', fontWeight: 600, fontSize: '0.95rem' }}>
-              {modalImage.title}
-            </p>
+            <div className="zoom-modal-image-wrapper">
+              <button
+                className="btn-close-zoom"
+                onClick={() => setModalImage(null)}
+                title="Cerrar vista previa"
+                aria-label="Cerrar"
+              >
+                <X size={18} />
+              </button>
+              <img src={modalImage.src} alt={modalImage.title} />
+            </div>
           </div>
         </div>
       )}

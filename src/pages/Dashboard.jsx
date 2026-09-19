@@ -637,6 +637,37 @@ const Dashboard = () => {
           width: 100%;
           object-fit: contain;
         }
+        .btn-remove-preview {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          width: 34px;
+          height: 34px;
+          background: rgba(15, 23, 42, 0.65);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          color: #ffffff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: 20;
+          padding: 0;
+        }
+        .btn-remove-preview:hover:not(:disabled) {
+          background: rgba(225, 29, 72, 0.9);
+          border-color: rgba(255, 255, 255, 0.5);
+          transform: scale(1.1);
+          color: #ffffff;
+        }
+        .btn-remove-preview:disabled {
+          cursor: not-allowed;
+          opacity: 0.35;
+        }
         .btn-analyze-action {
           flex: 1;
           padding: 0.65rem 1rem;
@@ -944,12 +975,12 @@ const Dashboard = () => {
                 <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: showUserDropdown ? 'rotate(180deg)' : 'rotate(0deg)' }} />
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ color: 'var(--primary)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                <span style={{ color: 'var(--primary)', fontSize: '0.75rem', fontWeight: 600 }}>
                   Especialista
                 </span>
                 <span style={{ color: '#cbd5e1' }}>•</span>
-                <span style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>
-                  {history.length} análisis
+                <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
+                  {history.length} Análisis
                 </span>
               </div>
             </div>
@@ -1070,32 +1101,15 @@ const Dashboard = () => {
           )}
 
           {preview && (
-            <div className="preview-box" style={{ position: 'relative' }}>
+            <div className="preview-box">
               <img src={preview} alt="Vista previa" />
               <button
                 type="button"
+                className="btn-remove-preview"
                 onClick={handleRemoveImage}
                 disabled={clearCooldown > 0}
-                style={{
-                  position: 'absolute',
-                  top: '10px',
-                  right: '10px',
-                  background: 'rgba(15, 23, 42, 0.75)',
-                  backdropFilter: 'blur(4px)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  cursor: clearCooldown > 0 ? 'not-allowed' : 'pointer',
-                  opacity: clearCooldown > 0 ? 0.35 : 1,
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-                  zIndex: 10
-                }}
                 title={clearCooldown > 0 ? `Espere ${clearCooldown}s para cambiar imagen` : "Cambiar o eliminar imagen"}
+                aria-label="Cambiar o eliminar imagen"
               >
                 <X size={18} />
               </button>

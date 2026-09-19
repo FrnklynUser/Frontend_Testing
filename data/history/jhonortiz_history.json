@@ -1,0 +1,17 @@
+{
+  "analyses": [
+    {
+      "id": "CASO-1909-02",
+      "timestamp": "19/9/2026, 12:51:37 a. m.",
+      "image_name": "Furrow-combination.jpg",
+      "preview_url": "blob:http://localhost:3000/12773afd-89d4-4358-9703-2b8cd8408122",
+      "prediction": "Nevo Acral (Benigno)",
+      "diagnostico": "Nevo Acral (Benigno)",
+      "confidence": "90.0%",
+      "probabilidad_ia": "90.0%",
+      "clase": 0,
+      "tiempo_ms": 740,
+      "umbral": 0.25
+    }
+  ]
+}
