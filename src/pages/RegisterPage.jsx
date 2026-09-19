@@ -158,7 +158,7 @@ const RegisterPage = () => {
           </h1>
         </div>
         <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: '2rem', maxWidth: '500px' }}>
-          Únete a nuestra plataforma de diagnóstico asistido por inteligencia artificial para la detección temprana de melanoma acral.
+          Únete a nuestra plataforma de soporte diagnóstico computacional y procesamiento digital de imágenes para la detección temprana de melanoma acral.
         </p>
         <div style={{ marginTop: '2rem' }}>
           <div className="check-item"><CheckCircle size={18} /> Analizar imágenes dermatoscópicas</div>

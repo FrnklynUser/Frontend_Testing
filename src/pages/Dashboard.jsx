@@ -266,7 +266,7 @@ const Dashboard = () => {
         setResult(null);
         if (toast?.warning) toast.warning('Imagen rechazada por el Gatekeeper.');
       } else if (data.status === 'error') {
-        setError(data.mensaje || 'Error devuelto por el pipeline de IA.');
+        setError(data.mensaje || 'Error devuelto por el pipeline de inferencia.');
         if (toast?.error) toast.error(data.mensaje || 'Error en el análisis.');
       } else {
         setResult(data);
@@ -1247,7 +1247,7 @@ const Dashboard = () => {
                       ? 'La lesión ya ha sido evaluada. Presione "Limpiar" para reiniciar.'
                       : !isClinicalComplete
                         ? 'Complete los datos clínicos obligatorios (Edad y Sexo)'
-                        : 'Iniciar análisis asistido por IA'
+                        : 'Iniciar análisis computacional de la lesión'
                   }
                 >
                   {loading ? (
@@ -1373,7 +1373,7 @@ const Dashboard = () => {
                 </div>
                 <div className={`step-progress-item ${loadingStep >= 2 ? (loadingStep > 2 ? 'done' : 'active') : ''}`}>
                   {loadingStep > 2 ? <CheckCircle2 size={18} /> : <div className="status-dot" />}
-                  <span>2. Consultando Gatekeeper Gemini (IA Dermatoscópica)...</span>
+                  <span>2. Ejecutando Módulo Gatekeeper de Validación Dermatoscópica...</span>
                 </div>
                 <div className={`step-progress-item ${loadingStep >= 3 ? 'active' : ''}`}>
                   <div className="status-dot" />
@@ -1652,8 +1652,8 @@ const Dashboard = () => {
                 <div>
                   <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0369a1', marginBottom: '0.35rem' }}>Proyecto de Tesis</div>
                   <div style={{ fontSize: '0.85rem', color: '#0c4a6e', lineHeight: '1.5' }}>
-                    Sistema de Diagnóstico Asistido por IA para Melanoma Acral<br />
-                    Modelo: EfficientNet-B3 Multimodal + DullRazor/Otsu + Grad-CAM<br />
+                    Sistema Computacional de Soporte Diagnóstico para Melanoma Acral<br />
+                    Arquitectura: EfficientNet-B3 Multimodal + DullRazor/Otsu + Grad-CAM<br />
                     Universidad Señor de Sipán
                   </div>
                 </div>

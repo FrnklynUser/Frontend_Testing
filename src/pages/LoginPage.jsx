@@ -62,7 +62,7 @@ const LoginPage = () => {
           </h1>
         </div>
         <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: '2rem', maxWidth: '500px' }}>
-          Bienvenido al Sistema Inteligente de Diagnóstico Asistido para la detección temprana de melanoma acral. Por favor, ingrese sus credenciales para comenzar.
+          Bienvenido a la Plataforma Computacional de Soporte Diagnóstico para la detección temprana de melanoma acral. Por favor, ingrese sus credenciales para comenzar.
         </p>
         <div style={{ marginTop: '2rem' }}>
           <div className="check-item"><CheckCircle size={18} /> Acceso seguro y protegido</div>
